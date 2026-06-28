@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hồ sơ Nâng cấp Lan Ngọc 2.0 — Sổ tay Công nhân tương lai số 01</title>
+
+<!-- Fonts: Sora (display) + Be Vietnam Pro (body) — both ship a Vietnamese subset -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- canvas-confetti (CDN) — bắn confetti ở checklist 100% & lễ kết nạp -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+<style>
+/* ============================================================
+   THEME TOKENS  (giữ nguyên màu logo: blue/green/navy)
+   ============================================================ */
+:root{
+  /* brand (giữ nguyên) */
+  --pvep-blue:#0083C7; --pvep-green:#00B050; --pvep-navy:#0A2A4A;
+  --ink-900:#1E293B; --ink-700:#334155; --ink-600:#475569; --ink-500:#64748B;
+  --bg-100:#F1F5F9; --white:#FFFFFF;
+  --danger:#DC2626; --warning:#EA580C; --caution:#D97706; --success:#15803D; --info:#1D4ED8;
+
+  /* Fonts */
+  --font-display:"Sora", system-ui, sans-serif;
+  --font-body:"Be Vietnam Pro", system-ui, sans-serif;
+
+  /* animated-components theme hooks → mapped to brand */
+  --ac-accent:#0083C7; --ac-accent-2:#00B050; --ac-accent-3:#0A2A4A; --ac-accent-4:#1D4ED8;
+  --ac-fg:#1E293B; --ac-muted:#64748B;
+  --ac-track:rgba(10,42,74,.10); --ac-line:rgba(10,42,74,.14);
+  --ac-ease:cubic-bezier(.22,.8,.18,1); --ac-ease-bounce:cubic-bezier(.34,1.56,.64,1);
+  --ac-dur:.8s; --ac-stagger:80ms;
+
+  /* layout */
+  --rail:260px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+/* ============================================================
+   viewport-base.css  (frontend-slides — MANDATORY)
+   ============================================================ */
+html, body{ height:100%; overflow-x:hidden; }
+html{ scroll-snap-type:y mandatory; scroll-behavior:smooth; }
+.slide{
+  width:100vw; height:100vh; height:100dvh; overflow:hidden;
+  scroll-snap-align:start; display:flex; flex-direction:column; position:relative;
+}
+.slide-content{
+  flex:1; display:flex; flex-direction:column; justify-content:center;
+  max-height:100%; overflow:hidden; padding:var(--slide-padding);
+}
+:root{
+  --title-size:clamp(1.8rem, 6vh, 4rem);
+  --h2-size:clamp(1.5rem, 4.5vh, 3rem);
+  --h3-size:clamp(1.2rem, 3.5vh, 2.25rem);
+  --body-size:clamp(1.05rem, 2.8vh, 1.875rem);
+  --small-size:clamp(0.85rem, 2.2vh, 1.5rem);
+  --slide-padding:clamp(1.2rem, 4.5vh, 4.5rem);
+  --content-gap:clamp(0.8rem, 2.5vh, 2.5rem);
+  --element-gap:clamp(0.4rem, 1.5vh, 1.5rem);
+}
+.card,.container,.content-box{ max-width:min(95vw,1400px); max-height:min(88vh,850px); }
+.feature-list,.bullet-list{ gap:clamp(0.4rem,1vh,1rem); }
+.feature-list li,.bullet-list li{ font-size:var(--body-size); line-height:1.4; }
+.grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr)); gap:clamp(0.5rem,1.5vw,1rem); }
+img,.image-container{ max-width:100%; max-height:min(50vh,400px); object-fit:contain; }
+@media (max-height:700px){ :root{ --slide-padding:clamp(0.75rem,3vw,2rem); --content-gap:clamp(0.4rem,1.5vw,1rem); --title-size:clamp(1.25rem,4.5vw,2.5rem); --h2-size:clamp(1rem,3vw,1.75rem); } }
+@media (max-height:600px){ :root{ --slide-padding:clamp(0.5rem,2.5vw,1.5rem); --content-gap:clamp(0.3rem,1vw,0.75rem); --title-size:clamp(1.1rem,4vw,2rem); --body-size:clamp(0.7rem,1.2vw,0.95rem); } .nav-dots,.keyboard-hint,.decorative{ display:none; } }
+@media (max-height:500px){ :root{ --slide-padding:clamp(0.4rem,2vw,1rem); --title-size:clamp(1rem,3.5vw,1.5rem); --h2-size:clamp(0.9rem,2.5vw,1.25rem); --body-size:clamp(0.65rem,1vw,0.85rem); } }
+@media (max-width:600px){ :root{ --title-size:clamp(1.25rem,7vw,2.5rem); } .grid{ grid-template-columns:1fr; } }
+@media (prefers-reduced-motion:reduce){ *,*::before,*::after{ animation-duration:0.01ms!important; transition-duration:0.2s!important; } html{ scroll-behavior:auto; } }
+
+/* ============================================================
+   animation-core.css  (animated-components engine)
+   ============================================================ */
+.ac-reveal{ opacity:0; }
+.ac-reveal--up{ transform:translateY(28px); }
+.ac-reveal--down{ transform:translateY(-28px); }
+.ac-reveal--left{ transform:translateX(-32px); }
+.ac-reveal--right{ transform:translateX(32px); }
+.ac-reveal--zoom{ transform:scale(.86); }
+.ac-on .ac-reveal{ animation:ac-fade-up var(--ac-dur) var(--ac-ease) both; animation-delay:calc(var(--i,0)*var(--ac-stagger) + var(--ac-delay,0ms)); }
+.ac-on .ac-reveal--left,.ac-on .ac-reveal--right{ animation-name:ac-fade-x; }
+.ac-on .ac-reveal--down{ animation-name:ac-fade-down; }
+.ac-on .ac-reveal--zoom{ animation-name:ac-zoom-in; animation-timing-function:var(--ac-ease-bounce); }
+@keyframes ac-fade-up{ from{opacity:0;transform:translateY(28px);} to{opacity:1;transform:none;} }
+@keyframes ac-fade-down{ from{opacity:0;transform:translateY(-28px);} to{opacity:1;transform:none;} }
+@keyframes ac-fade-x{ from{opacity:0;} to{opacity:1;transform:none;} }
+@keyframes ac-zoom-in{ from{opacity:0;transform:scale(.86);} to{opacity:1;transform:scale(1);} }
+.ac-pop{ opacity:0; transform:scale(.4); }
+.ac-on .ac-pop{ animation:ac-pop var(--ac-dur) var(--ac-ease-bounce) both; animation-delay:calc(var(--i,0)*var(--ac-stagger) + var(--ac-delay,0ms)); }
+@keyframes ac-pop{ from{opacity:0;transform:scale(.4);} to{opacity:1;transform:scale(1);} }
+.ac-bar{ height:0; transition:height .9s var(--ac-ease); transition-delay:calc(var(--i,0)*var(--ac-stagger)); }
+.ac-on .ac-bar{ height:var(--h); }
+.ac-fill-x{ width:0; transition:width .9s var(--ac-ease); transition-delay:calc(var(--i,0)*var(--ac-stagger)); }
+.ac-on .ac-fill-x{ width:var(--w); }
+.ac-ring-val{ stroke-dasharray:var(--circ); stroke-dashoffset:var(--circ); transition:stroke-dashoffset 1.1s var(--ac-ease); transition-delay:calc(var(--i,0)*var(--ac-stagger)); }
+.ac-on .ac-ring-val{ stroke-dashoffset:calc(var(--circ)*(1 - var(--p))); }
+.ac-draw{ stroke-dasharray:var(--len); stroke-dashoffset:var(--len); }
+.ac-on .ac-draw{ animation:ac-draw 1.1s var(--ac-ease) forwards; animation-delay:calc(var(--i,0)*var(--ac-stagger)); }
+@keyframes ac-draw{ to{ stroke-dashoffset:0; } }
+.ac-float{ animation:ac-float 6s ease-in-out infinite; }
+@keyframes ac-float{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+.ac-spin{ animation:ac-spin 18s linear infinite; transform-origin:center; }
+@keyframes ac-spin{ to{ transform:rotate(360deg); } }
+.ac-shimmer{ background-size:200% 100%; animation:ac-shimmer 3.5s linear infinite; }
+@keyframes ac-shimmer{ to{ background-position:-200% 0; } }
+.ac-caret{ border-right:.08em solid var(--ac-accent); animation:ac-blink 1s steps(1) infinite; }
+@keyframes ac-blink{ 50%{ border-color:transparent; } }
+@media (prefers-reduced-motion:reduce){
+  .ac-reveal,.ac-pop{ opacity:1!important; transform:none!important; }
+  .ac-bar{ height:var(--h)!important; } .ac-fill-x{ width:var(--w)!important; }
+  .ac-ring-val{ stroke-dashoffset:calc(var(--circ)*(1 - var(--p)))!important; }
+  .ac-draw{ stroke-dashoffset:0!important; }
+  .ac-float,.ac-spin,.ac-shimmer,.ac-caret{ animation:none!important; }
+  *{ transition-duration:.001s!important; }
+}
+
+/* ============================================================
+   GLOBAL LOOK  (light executive surface — giữ nguyên nền)
+   ============================================================ */
+body{
+  font-family:var(--font-body); color:var(--ink-600);
+  background:
+    radial-gradient(1100px 760px at 82% -12%, rgba(0,131,199,.10), transparent 60%),
+    radial-gradient(940px 680px at -8% 112%, rgba(0,176,80,.09), transparent 55%),
+    linear-gradient(135deg,#FFFFFF 0%, #EEF3F8 100%);
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+.wrap{ width:min(95%, 1650px); margin-inline:auto; position:relative; z-index:2; }
+.wrap--narrow{ width:min(92%, 1080px); }
+@media (min-width:1000px){ .slide-content{ padding-left:calc(var(--slide-padding) + var(--rail)); } }
+
+.head-center{ text-align:center; display:flex; flex-direction:column; gap:.45rem; align-items:center; margin-bottom:clamp(.6rem,2.2vh,1.4rem); }
+.eyebrow{ font-family:var(--font-display); font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--pvep-blue); font-size:clamp(.62rem,1vw,.82rem); }
+.s-title{ font-family:var(--font-display); font-weight:800; color:var(--pvep-navy); font-size:clamp(1.4rem,3.6vw,2.7rem); line-height:1.08; letter-spacing:-.01em; position:relative; }
+.s-title--sm{ font-size:clamp(1.2rem,2.8vw,2rem); }
+.neo{ color:var(--pvep-blue); } .neo-g{ color:var(--pvep-green); }
+.lead{ font-size:var(--body-size); color:var(--ink-600); line-height:1.5; max-width:60ch; }
+.lead b{ color:var(--pvep-navy); }
+.muted{ color:var(--ink-500); }
+
+/* số thứ tự "ĐIỀU #N" — viên thuốc thương hiệu */
+.rule-pill{ display:inline-flex; align-items:center; gap:.5rem; font-family:var(--font-display); font-weight:800; font-size:clamp(.7rem,1.3vw,.92rem); letter-spacing:.06em; color:#fff; background:linear-gradient(135deg,var(--pvep-blue),var(--pvep-green)); padding:.4rem .95rem; border-radius:999px; box-shadow:0 8px 22px rgba(0,131,199,.28); }
+.rule-pill .n{ font-size:1.15em; }
+
+/* ----- Left chapter rail ----- */
+.rail{
+  position:fixed; inset:0 auto 0 0; width:var(--rail); height:100vh; height:100dvh; z-index:50;
+  display:flex; flex-direction:column; justify-content:center; gap:.15rem; padding:1.4rem 1rem;
+  background:linear-gradient(180deg, rgba(255,255,255,.90), rgba(238,243,248,.86));
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  border-right:1px solid rgba(10,42,74,.10);
+}
+.rail__brand{ display:flex; align-items:center; gap:.55rem; margin-bottom:.2rem; }
+.rail__logo{ width:34px; height:34px; border-radius:9px; background:linear-gradient(135deg,var(--pvep-blue),var(--pvep-green)); display:grid; place-content:center; color:#fff; font-family:var(--font-display); font-weight:800; font-size:.95rem; box-shadow:0 6px 16px rgba(0,131,199,.3); }
+.rail__title{ font-family:var(--font-display); font-weight:800; color:var(--pvep-navy); font-size:.92rem; line-height:1; }
+.rail__sub{ font-size:.58rem; color:var(--ink-500); text-transform:uppercase; letter-spacing:.16em; margin:.15rem 0 1.1rem; }
+.rail__item{ display:flex; gap:.55rem; align-items:center; padding:.5rem .55rem; border-radius:10px; cursor:pointer; color:var(--ink-500); font-size:.74rem; font-weight:600; line-height:1.2; transition:color .25s, background .25s; }
+.rail__item .dot{ width:7px; height:7px; border-radius:50%; background:var(--ac-track); flex:none; transition:background .25s, box-shadow .25s; }
+.rail__num{ font-family:var(--font-display); font-weight:700; opacity:.45; font-size:.7rem; min-width:1.1em; }
+.rail__item:hover{ color:var(--ink-700); background:rgba(0,131,199,.06); }
+.rail__item.is-active{ color:var(--pvep-blue); background:rgba(0,131,199,.10); }
+.rail__item.is-active .dot{ background:var(--pvep-blue); box-shadow:0 0 0 4px rgba(0,131,199,.16); }
+.rail__item.is-active .rail__num{ opacity:1; color:var(--pvep-blue); }
+@media (max-width:999px){ .rail{ display:none; } }
+body.hero-active .rail{
+  background:linear-gradient(180deg, rgba(255,255,255,.30), rgba(255,255,255,.12));
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  border-right-color:rgba(255,255,255,.40);
+  transition:background .5s var(--ac-ease), border-color .5s var(--ac-ease);
+}
+
+/* ----- Slide counter + progress + hint ----- */
+.counter{ position:fixed; top:1.05rem; right:1.4rem; z-index:60; font-family:var(--font-display); font-weight:700; color:var(--pvep-navy); font-size:.95rem; letter-spacing:.03em; background:rgba(255,255,255,.72); padding:.32rem .8rem; border-radius:999px; border:1px solid rgba(10,42,74,.12); backdrop-filter:blur(6px); }
+.counter #cur{ color:var(--pvep-blue); } .counter .sep{ opacity:.4; margin:0 .18rem; }
+.progress{ position:fixed; top:0; left:0; height:3px; width:100%; z-index:61; background:transparent; }
+.progress__fill{ height:100%; width:0; background:linear-gradient(90deg,var(--pvep-blue),var(--pvep-green)); transition:width .45s var(--ac-ease); }
+.hint{ position:fixed; bottom:.9rem; right:1.4rem; z-index:55; font-size:.66rem; color:var(--ink-500); letter-spacing:.04em; }
+@media (max-width:999px){ .hint{ display:none; } }
+
+/* ============================================================
+   PHONE MODE
+   ============================================================ */
+.m-hint{ display:none; }
+@media (max-width:820px){
+  html{ scroll-snap-type:y mandatory; scroll-behavior:smooth; -webkit-overflow-scrolling:touch; }
+  html, body{ overscroll-behavior:contain; }
+  .slide{ height:100svh; min-height:100svh; }
+  .slide-content{ padding-left:var(--slide-padding); padding-right:var(--slide-padding); justify-content:center; }
+  :root{
+    --title-size:clamp(1.5rem,7.5vw,2.6rem);
+    --h2-size:clamp(1.15rem,5.6vw,1.95rem);
+    --h3-size:clamp(1.05rem,4.8vw,1.6rem);
+    --body-size:clamp(.92rem,4vw,1.18rem);
+    --small-size:clamp(.78rem,3.4vw,1rem);
+    --slide-padding:clamp(1rem,5vw,1.8rem);
+    --content-gap:clamp(.7rem,3vw,1.4rem);
+  }
+  .grid{ grid-template-columns:1fr; }
+  img,.image-container{ max-height:min(38vh,360px); }
+  .counter{ top:auto; bottom:1.05rem; right:50%; transform:translateX(50%); font-size:.85rem; padding:.3rem .85rem; }
+  .m-hint{
+    display:flex; align-items:center; gap:.4rem;
+    position:fixed; left:50%; bottom:2.9rem; transform:translateX(-50%);
+    z-index:62; pointer-events:none;
+    font-size:.72rem; font-weight:600; letter-spacing:.02em; color:var(--pvep-navy);
+    background:rgba(255,255,255,.80); border:1px solid rgba(10,42,74,.12);
+    padding:.32rem .72rem; border-radius:999px;
+    backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  .m-hint .m-arrow{ display:inline-block; animation:m-bounce 1.4s var(--ac-ease) infinite; }
+  .m-hint.is-hidden{ opacity:0; transform:translate(-50%,8px); }
+}
+@keyframes m-bounce{ 0%,100%{ transform:translateY(-2px);} 50%{ transform:translateY(3px);} }
+
+/* ----- Ambient background layer ----- */
+.ambient{ position:absolute; inset:0; overflow:hidden; z-index:0; pointer-events:none; }
+.ambient>*{ position:absolute; }
+
+/* ============================================================
+   GLOBAL ANIMATED BACKGROUND (giữ nguyên ảnh nền offshore)
+   ============================================================ */
+.oilbg{ position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+  background:#eef3f8 url("assets/offshore-still.jpg") center center / cover no-repeat; }
+.oilbg::after{ content:""; position:absolute; inset:0;
+  background:linear-gradient(120deg, rgba(255,255,255,.82) 0%, rgba(255,255,255,.74) 42%, rgba(238,243,248,.78) 74%, rgba(0,131,199,.10) 100%); }
+.aurora{ position:absolute; border-radius:50%; filter:blur(85px); }
+.aurora--1{ width:56vmax; height:56vmax; top:-20vmax; left:-12vmax; opacity:.5; background:radial-gradient(circle, rgba(0,131,199,.32), transparent 66%); animation:auroraDrift 28s ease-in-out infinite alternate; }
+.aurora--2{ width:50vmax; height:50vmax; bottom:-18vmax; right:-10vmax; opacity:.42; background:radial-gradient(circle, rgba(0,176,80,.30), transparent 66%); animation:auroraDrift 34s ease-in-out infinite alternate-reverse; animation-delay:-9s; }
+@keyframes auroraDrift{ 0%{transform:translate(0,0) scale(1)} 100%{transform:translate(6%,4%) scale(1.14)} }
+@media (prefers-reduced-motion:reduce){ .aurora{ animation:none!important; } }
+
+/* ---- Explosive emphasis utilities ---- */
+.s-title::before{ content:""; position:absolute; left:50%; top:50%; width:140%; height:200%; transform:translate(-50%,-50%) scale(.25); border-radius:50%; background:radial-gradient(ellipse,rgba(0,131,199,.16),rgba(0,176,80,.06) 45%,transparent 72%); opacity:0; z-index:-1; pointer-events:none; }
+.ac-on .s-title::before{ animation:flashBurst 1.1s var(--ac-ease) .12s forwards; }
+.flash{ position:relative; }
+.flash::before{ content:""; position:absolute; left:50%; top:50%; width:130%; height:170%; transform:translate(-50%,-50%) scale(.2); border-radius:50%; background:radial-gradient(circle,rgba(0,131,199,.34),rgba(0,176,80,.12) 45%,transparent 70%); opacity:0; z-index:-1; pointer-events:none; }
+.ac-on .flash::before{ animation:flashBurst 1.25s var(--ac-ease) forwards; animation-delay:calc(var(--i,0)*var(--ac-stagger)); }
+@keyframes flashBurst{ 0%{opacity:0;transform:translate(-50%,-50%) scale(.2)} 35%{opacity:1} 100%{opacity:0;transform:translate(-50%,-50%) scale(1.5)} }
+@keyframes textShine{ to{ background-position:220% 0; } }
+@keyframes boomIn{ 0%{opacity:0;transform:scale(.5);filter:blur(20px)} 55%{opacity:1;filter:blur(0)} 80%{transform:scale(1.07)} 100%{opacity:1;transform:scale(1)} }
+@keyframes glowPulse{ 0%,100%{text-shadow:0 0 0 rgba(0,131,199,0)} 50%{text-shadow:0 0 28px rgba(0,131,199,.55)} }
+
+/* ============================================================
+   HERO (Slide 0)
+   ============================================================ */
+.hero__kicker{ font-family:var(--font-display); font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--pvep-blue); font-size:clamp(.66rem,1.2vw,.92rem); margin-bottom:1rem; }
+.hero__word{ font-family:var(--font-display); font-weight:800; line-height:.95; letter-spacing:-.02em; position:relative;
+  font-size:clamp(2.6rem,8.5vw,6.4rem);
+  background:linear-gradient(120deg,var(--pvep-navy) 0%,var(--pvep-blue) 45%,var(--pvep-green) 65%,var(--pvep-blue) 100%);
+  background-size:220% 100%;
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.ac-on .hero__word{ animation:heroIn 1.2s var(--ac-ease-bounce) .08s both, textShine 5s linear 1.4s infinite; }
+@keyframes heroIn{ 0%{opacity:0;transform:scale(.6);filter:blur(20px)} 55%{opacity:1;filter:blur(0)} 80%{transform:scale(1.06)} 100%{opacity:1;transform:scale(1)} }
+.hero__sub{ font-family:var(--font-display); font-weight:700; color:var(--ink-700); font-size:clamp(1rem,2.6vw,1.7rem); letter-spacing:.01em; margin-top:.5rem; }
+.hero__tag{ color:var(--ink-600); font-size:clamp(.9rem,2vw,1.25rem); margin:1.2rem auto 0; max-width:46ch; min-height:1.7em; line-height:1.5; }
+.hero__meta{ display:flex; flex-wrap:wrap; gap:.6rem; justify-content:center; margin-top:1.6rem; }
+.hero__chip{ font-size:clamp(.74rem,1.4vw,.95rem); font-weight:600; color:var(--pvep-navy); background:rgba(255,255,255,.75); border:1px solid rgba(10,42,74,.12); padding:.45rem 1rem; border-radius:999px; backdrop-filter:blur(6px); }
+.hero__chip b{ color:var(--pvep-blue); }
+
+/* ============================================================
+   BUTTONS / shared bits
+   ============================================================ */
+.btn{ cursor:pointer; font-family:var(--font-display); font-weight:800; font-size:clamp(.85rem,1.6vw,1.05rem); color:#fff; background:linear-gradient(135deg,var(--pvep-blue),var(--pvep-green)); border:0; padding:.8rem 1.6rem; border-radius:999px; box-shadow:0 12px 30px rgba(0,131,199,.32); transition:transform .2s var(--ac-ease), box-shadow .2s; }
+.btn:hover{ transform:translateY(-3px); box-shadow:0 18px 42px rgba(0,131,199,.4); }
+.btn:active{ transform:translateY(0) scale(.97); }
+.btn:focus-visible{ outline:3px solid rgba(0,131,199,.4); outline-offset:3px; }
+.btn--ghost{ color:var(--pvep-blue); background:rgba(0,131,199,.08); border:1.5px solid rgba(0,131,199,.35); box-shadow:none; }
+.btn--ghost:hover{ background:rgba(0,131,199,.14); box-shadow:0 10px 24px rgba(0,131,199,.16); }
+
+/* generic card */
+.panel{ background:rgba(255,255,255,.92); border:1px solid var(--ac-line); border-radius:20px; box-shadow:0 16px 46px rgba(10,42,74,.08); }
+
+/* ============================================================
+   S1 — Nội quy (tick "đã đọc")
+   ============================================================ */
+.rule-card{ max-width:760px; margin-inline:auto; padding:clamp(1.4rem,3vw,2.4rem); text-align:left; }
+.rule-card .lead{ margin-bottom:1.2rem; }
+.tickline{ display:flex; align-items:center; gap:.85rem; cursor:pointer; user-select:none; padding:.7rem .2rem; }
+.tickbox{ flex:none; width:30px; height:30px; border-radius:9px; border:2.5px solid var(--pvep-blue); display:grid; place-content:center; background:#fff; transition:background .25s var(--ac-ease-bounce), border-color .25s; }
+.tickbox svg{ width:18px; height:18px; stroke:#fff; stroke-width:3.5; fill:none; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:24; stroke-dashoffset:24; transition:stroke-dashoffset .35s var(--ac-ease) .05s; }
+.tickline.on .tickbox{ background:var(--pvep-green); border-color:var(--pvep-green); }
+.tickline.on .tickbox svg{ stroke-dashoffset:0; }
+.tickline span{ font-size:var(--body-size); color:var(--ink-700); font-weight:600; }
+.whisper{ margin-top:.4rem; margin-left:calc(30px + .85rem); font-style:italic; color:var(--pvep-blue); font-size:var(--small-size); opacity:0; transform:translateY(6px); transition:opacity .4s, transform .4s; }
+.whisper.show{ opacity:.95; transform:none; }
+
+/* ============================================================
+   FLIP CARD (S2, S7)
+   ============================================================ */
+.flip{ perspective:1400px; max-width:640px; margin-inline:auto; width:100%; }
+.flip__inner{ position:relative; width:100%; min-height:clamp(220px,38vh,320px); transition:transform .8s var(--ac-ease-bounce); transform-style:preserve-3d; cursor:pointer; }
+.flip.flipped .flip__inner{ transform:rotateY(180deg); }
+.flip__face{ position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; border-radius:22px; padding:clamp(1.4rem,3.2vw,2.4rem); display:flex; flex-direction:column; justify-content:center; gap:.8rem; text-align:center; }
+.flip__front{ background:rgba(255,255,255,.94); border:1px solid var(--ac-line); box-shadow:0 18px 50px rgba(10,42,74,.10); }
+.flip__back{ background:linear-gradient(140deg,var(--pvep-navy),#0d3a63 60%,var(--pvep-blue)); color:#fff; transform:rotateY(180deg); box-shadow:0 22px 56px rgba(0,131,199,.34); }
+.flip__front h3{ font-family:var(--font-display); color:var(--pvep-navy); font-weight:800; font-size:clamp(1.2rem,2.8vw,1.9rem); line-height:1.2; }
+.flip__front p{ color:var(--ink-600); font-size:var(--body-size); line-height:1.45; }
+.flip__back .big{ font-family:var(--font-display); font-weight:800; font-size:clamp(1.05rem,2.5vw,1.6rem); line-height:1.35; }
+.flip__back .small{ color:rgba(255,255,255,.82); font-size:var(--small-size); }
+.flip__tag{ position:absolute; top:.9rem; right:1rem; font-size:.66rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--pvep-blue); background:rgba(0,131,199,.1); padding:.25rem .6rem; border-radius:999px; backface-visibility:hidden; }
+.flip__back .flip__tag{ color:#fff; background:rgba(255,255,255,.2); transform:rotateY(180deg); }
+
+/* depth-vs-spread mini chart (S2) */
+.depthwrap{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(.8rem,2vw,1.4rem); max-width:640px; margin:1.2rem auto 0; }
+.depthcard{ background:rgba(255,255,255,.9); border:1px solid var(--ac-line); border-radius:16px; padding:1rem; text-align:center; }
+.depthcard h4{ font-family:var(--font-display); font-size:.92rem; color:var(--ink-700); margin-bottom:.5rem; }
+.roots{ display:flex; justify-content:center; align-items:flex-start; gap:6px; height:clamp(80px,14vh,120px); }
+.root{ width:7px; border-radius:0 0 6px 6px; background:linear-gradient(180deg,var(--pvep-green),#0a7a38); align-self:flex-start; }
+.spread{ display:flex; justify-content:center; align-items:flex-end; gap:6px; height:clamp(80px,14vh,120px); }
+.twig{ width:7px; border-radius:6px 6px 0 0; background:linear-gradient(180deg,#a8c3d6,#cfd9e3); align-self:flex-end; }
+
+/* ============================================================
+   S3 — Cân: việc lớn vs lẻ tẻ (tap-to-sort)
+   ============================================================ */
+.scale{ display:flex; flex-direction:column; align-items:center; margin-top:.6rem; }
+.beam-rig{ position:relative; width:min(96%,820px); height:clamp(150px,24vh,210px); }
+.fulcrum{ position:absolute; left:50%; bottom:0; transform:translateX(-50%); width:0;height:0;border-left:34px solid transparent;border-right:34px solid transparent;border-bottom:clamp(70px,12vh,104px) solid rgba(10,42,74,.16); }
+.beam{ position:absolute; left:50%; top:clamp(34px,5vh,44px); width:100%; height:12px; border-radius:8px; background:linear-gradient(90deg,var(--pvep-blue),var(--pvep-green)); transform:translateX(-50%) rotate(0deg); transform-origin:center; transition:transform .6s var(--ac-ease-bounce); box-shadow:0 8px 20px rgba(0,131,199,.25); }
+.pan{ position:absolute; top:clamp(40px,6vh,54px); width:clamp(150px,30%,260px); min-height:clamp(78px,13vh,110px); border-radius:0 0 16px 16px; border:2px dashed rgba(10,42,74,.22); background:rgba(255,255,255,.72); display:flex; flex-wrap:wrap; gap:.4rem; align-content:flex-start; padding:.6rem; transition:transform .6s var(--ac-ease-bounce), border-color .25s, background .25s; }
+.pan::before{ content:attr(data-label); position:absolute; top:-1.7rem; left:50%; transform:translateX(-50%); font-family:var(--font-display); font-weight:800; font-size:.8rem; white-space:nowrap; }
+.pan--big{ left:4%; } .pan--big::before{ content:"⬆ VIỆC LỚN"; color:var(--pvep-green); }
+.pan--petty{ right:4%; } .pan--petty::before{ content:"VIỆC LẺ TẺ"; color:var(--ink-500); }
+.pan.bad{ border-color:var(--danger); background:rgba(220,38,38,.08); animation:wob .4s ease; }
+@keyframes wob{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+.tray{ display:flex; flex-wrap:wrap; gap:.55rem; justify-content:center; margin-top:1.4rem; max-width:880px; }
+.item{ cursor:pointer; font-weight:600; font-size:clamp(.78rem,1.5vw,.98rem); color:var(--ink-700); background:#fff; border:1.5px solid var(--ac-line); padding:.45rem .9rem; border-radius:999px; box-shadow:0 6px 16px rgba(10,42,74,.06); transition:transform .2s, border-color .2s, box-shadow .2s; }
+.item:hover{ transform:translateY(-2px); border-color:var(--pvep-blue); }
+.item.sel{ border-color:var(--pvep-blue); box-shadow:0 0 0 4px rgba(0,131,199,.16); }
+.item.placed{ font-size:clamp(.7rem,1.3vw,.85rem); padding:.3rem .65rem; box-shadow:none; }
+.item[data-cat="big"].placed{ border-color:var(--pvep-green); color:var(--success); }
+.scale-msg{ margin-top:1rem; min-height:1.5em; font-weight:600; font-size:var(--small-size); text-align:center; }
+.scale-hint{ color:var(--ink-500); font-size:var(--small-size); margin-top:.5rem; }
+
+/* ============================================================
+   S4 — Năng lượng còn lại (energy meter)
+   ============================================================ */
+.energy-wrap{ max-width:680px; margin:.4rem auto 0; text-align:center; }
+.gauge{ position:relative; height:clamp(34px,5.5vh,46px); border-radius:999px; background:var(--ac-track); overflow:hidden; box-shadow:inset 0 2px 6px rgba(10,42,74,.12); }
+.gauge__fill{ position:absolute; inset:0 auto 0 0; width:100%; border-radius:999px; background:linear-gradient(90deg,var(--pvep-green),var(--pvep-blue)); transition:width .5s var(--ac-ease), background .5s; }
+.gauge__num{ position:relative; z-index:2; font-family:var(--font-display); font-weight:800; color:#fff; line-height:clamp(34px,5.5vh,46px); font-size:clamp(.9rem,1.8vw,1.15rem); text-shadow:0 1px 3px rgba(0,0,0,.25); }
+.energy-row{ display:flex; gap:.7rem; justify-content:center; flex-wrap:wrap; margin-top:1.2rem; }
+.energy-status{ margin-top:1rem; font-weight:600; min-height:1.6em; color:var(--ink-600); font-size:var(--body-size); }
+
+/* ============================================================
+   S5 — Tắt thông báo (80% donut + flying drama)
+   ============================================================ */
+.notif{ display:grid; grid-template-columns:auto 1fr; gap:clamp(1.2rem,4vw,3rem); align-items:center; max-width:960px; margin-inline:auto; }
+@media (max-width:760px){ .notif{ grid-template-columns:1fr; text-align:center; } }
+.donut{ position:relative; width:clamp(160px,22vw,220px); aspect-ratio:1; margin-inline:auto; }
+.donut svg{ width:100%; height:100%; transform:rotate(-90deg); }
+.donut__num{ position:absolute; inset:0; display:grid; place-content:center; text-align:center; }
+.donut__num b{ font-family:var(--font-display); font-weight:800; color:var(--pvep-blue); font-size:clamp(1.8rem,4vw,2.8rem); }
+.donut__num span{ display:block; font-size:.7rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-500); }
+.notif-stage{ position:relative; }
+.drama-cloud{ display:flex; flex-wrap:wrap; gap:.5rem; margin:1rem 0; }
+.drama{ font-size:clamp(1rem,2vw,1.3rem); background:rgba(220,38,38,.08); border:1px solid rgba(220,38,38,.25); padding:.35rem .7rem; border-radius:10px; transition:transform .7s var(--ac-ease), opacity .7s; }
+.drama.fly{ opacity:0; transform:translate(var(--fx,0),-120px) rotate(var(--fr,20deg)) scale(.4); }
+.calm-note{ opacity:0; transition:opacity .6s .3s; font-weight:600; color:var(--success); font-size:var(--body-size); }
+.calm-note.show{ opacity:1; }
+
+/* ============================================================
+   S6 — Vòng quay sở thích
+   ============================================================ */
+.wheel-wrap{ display:grid; grid-template-columns:auto 1fr; gap:clamp(1.2rem,4vw,3rem); align-items:center; max-width:940px; margin-inline:auto; }
+@media (max-width:760px){ .wheel-wrap{ grid-template-columns:1fr; justify-items:center; text-align:center; } }
+.wheel-box{ position:relative; width:clamp(200px,30vw,300px); aspect-ratio:1; }
+.wheel{ width:100%; height:100%; border-radius:50%; border:8px solid #fff; box-shadow:0 18px 50px rgba(10,42,74,.18); transition:transform 4.2s cubic-bezier(.16,.84,.28,1); }
+.wheel-pointer{ position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;border-top:24px solid var(--pvep-navy); z-index:3; filter:drop-shadow(0 3px 4px rgba(0,0,0,.25)); }
+.wheel-hub{ position:absolute; inset:0; margin:auto; width:54px; height:54px; border-radius:50%; background:#fff; box-shadow:0 4px 12px rgba(10,42,74,.2); display:grid; place-content:center; font-size:1.4rem; z-index:2; }
+.wheel-result{ font-family:var(--font-display); font-weight:800; color:var(--pvep-navy); font-size:clamp(1.3rem,3vw,2rem); min-height:1.4em; }
+.wheel-add{ display:flex; gap:.5rem; margin-top:1rem; flex-wrap:wrap; }
+.field{ font-family:var(--font-body); font-size:var(--small-size); color:var(--ink-700); background:#fff; border:1.5px solid var(--ac-line); border-radius:12px; padding:.6rem .9rem; flex:1; min-width:180px; }
+.field:focus{ outline:none; border-color:var(--pvep-blue); box-shadow:0 0 0 3px rgba(0,131,199,.16); }
+
+/* ============================================================
+   S7 — approval curve (mini bar)
+   ============================================================ */
+.curve{ display:flex; align-items:flex-end; gap:clamp(.4rem,1.4vw,.9rem); height:clamp(110px,18vh,170px); max-width:560px; margin:1rem auto 0; padding:0 .5rem; }
+.curve .cb{ flex:1; border-radius:7px 7px 0 0; background:linear-gradient(180deg,var(--pvep-blue),#005f91); position:relative; }
+.curve .cb span{ position:absolute; bottom:-1.5rem; left:0; right:0; text-align:center; font-size:.62rem; color:var(--ink-500); }
+.curve .cb.bad{ background:linear-gradient(180deg,#f87171,var(--danger)); }
+
+/* ============================================================
+   S8 — input "khó chịu vì" + quick chips
+   ============================================================ */
+.input-card{ max-width:680px; margin-inline:auto; padding:clamp(1.3rem,3vw,2rem); }
+.chips{ display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1rem; }
+.qchip{ cursor:pointer; font-size:var(--small-size); font-weight:600; color:var(--pvep-blue); background:rgba(0,131,199,.08); border:1.5px solid rgba(0,131,199,.3); padding:.45rem .9rem; border-radius:999px; transition:all .2s; }
+.qchip:hover{ background:rgba(0,131,199,.16); transform:translateY(-2px); }
+.qchip.on{ background:var(--pvep-blue); color:#fff; }
+.say-out{ margin-top:1.1rem; font-weight:600; font-size:var(--body-size); color:var(--success); min-height:1.6em; }
+
+/* ============================================================
+   S9 — Khuôn mặt sưng (star slide)
+   ============================================================ */
+.face-wrap{ display:flex; flex-direction:column; align-items:center; gap:1rem; }
+.face{ width:clamp(160px,24vw,230px); aspect-ratio:1; }
+.face .cheek{ transition:transform .6s var(--ac-ease-bounce); transform-origin:center; }
+.face.calm .cheek-l{ transform:scale(.78) translate(4px,2px); }
+.face.calm .cheek-r{ transform:scale(.78) translate(-4px,2px); }
+.face .mouth{ transition:d .5s var(--ac-ease); }
+.face .brow{ transition:transform .5s var(--ac-ease); transform-origin:center; }
+.face.calm .brow-l{ transform:rotate(8deg) translateY(-2px); }
+.face.calm .brow-r{ transform:rotate(-8deg) translateY(-2px); }
+.face-out{ font-weight:700; font-size:var(--body-size); color:var(--success); min-height:1.6em; text-align:center; }
+
+/* ============================================================
+   S10 — Swipe / xoá "những thứ nên buông"
+   ============================================================ */
+.letgo{ max-width:620px; margin:.4rem auto 0; display:flex; flex-direction:column; gap:.6rem; }
+.lg-item{ position:relative; overflow:hidden; background:rgba(255,255,255,.94); border:1px solid var(--ac-line); border-left:4px solid var(--pvep-blue); border-radius:14px; padding:.85rem 1rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; transition:transform .45s var(--ac-ease), opacity .45s, margin .45s, padding .45s, border-color .25s; }
+.lg-item span{ font-size:var(--body-size); color:var(--ink-700); font-weight:500; }
+.lg-x{ flex:none; cursor:pointer; width:34px; height:34px; border-radius:50%; border:0; background:rgba(220,38,38,.1); color:var(--danger); font-weight:800; font-size:1.1rem; display:grid; place-content:center; transition:background .2s, transform .2s; }
+.lg-x:hover{ background:rgba(220,38,38,.2); transform:rotate(90deg); }
+.lg-item.gone{ transform:translateX(120%); opacity:0; }
+.lg-item.collapse{ margin-top:-.6rem; padding-top:0; padding-bottom:0; height:0; border-width:0; }
+.lighter{ text-align:center; margin-top:1rem; font-weight:600; color:var(--pvep-green); font-size:var(--small-size); min-height:1.5em; }
+
+/* ============================================================
+   S11 — Tự khen
+   ============================================================ */
+.praise-stage{ max-width:680px; margin-inline:auto; text-align:center; }
+.praise-bubble{ background:linear-gradient(140deg,rgba(0,131,199,.10),rgba(0,176,80,.08)); border:1px solid rgba(0,131,199,.25); border-radius:22px; padding:clamp(1.4rem,3.4vw,2.4rem); font-family:var(--font-display); font-weight:700; color:var(--pvep-navy); font-size:clamp(1.2rem,3vw,2rem); line-height:1.35; min-height:clamp(120px,22vh,180px); display:flex; align-items:center; justify-content:center; transition:transform .35s var(--ac-ease-bounce); }
+.praise-bubble.pop{ transform:scale(1.04); }
+
+/* ============================================================
+   S12 — Checklist + % nâng cấp
+   ============================================================ */
+.check-grid{ display:grid; grid-template-columns:1fr 1fr; gap:.55rem .9rem; max-width:920px; margin-inline:auto; }
+@media (max-width:760px){ .check-grid{ grid-template-columns:1fr; } }
+.cl{ display:flex; align-items:center; gap:.7rem; cursor:pointer; user-select:none; background:rgba(255,255,255,.9); border:1px solid var(--ac-line); border-radius:13px; padding:.65rem .85rem; transition:border-color .2s, background .2s; }
+.cl:hover{ border-color:var(--pvep-blue); }
+.cl .tickbox{ width:26px; height:26px; border-radius:7px; border-width:2px; }
+.cl .tickbox svg{ width:15px; height:15px; }
+.cl span{ font-size:var(--small-size); color:var(--ink-700); font-weight:600; line-height:1.25; }
+.cl.on{ background:rgba(0,176,80,.08); border-color:rgba(0,176,80,.4); }
+.cl.star{ border-color:rgba(0,131,199,.4); }
+.upgrade{ max-width:920px; margin:1.2rem auto 0; }
+.upgrade__top{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:.4rem; }
+.upgrade__top b{ font-family:var(--font-display); color:var(--pvep-navy); }
+.upgrade__pct{ font-family:var(--font-display); font-weight:800; color:var(--pvep-blue); font-size:clamp(1.1rem,2.4vw,1.5rem); }
+.upgrade__bar{ height:18px; border-radius:999px; background:var(--ac-track); overflow:hidden; box-shadow:inset 0 2px 5px rgba(10,42,74,.12); }
+.upgrade__fill{ height:100%; width:0; border-radius:999px; background:linear-gradient(90deg,var(--pvep-blue),var(--pvep-green)); transition:width .6s var(--ac-ease-bounce); }
+.upgrade__msg{ margin-top:.6rem; text-align:center; font-weight:600; color:var(--pvep-green); min-height:1.5em; font-size:var(--small-size); }
+
+/* ============================================================
+   S13 — Roadmap timeline
+   ============================================================ */
+.road{ position:relative; display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(.6rem,2vw,1.2rem); max-width:1040px; margin:1rem auto 0; }
+@media (max-width:760px){ .road{ grid-template-columns:1fr 1fr; } }
+.road::before{ content:""; position:absolute; top:30px; left:6%; right:6%; height:4px; border-radius:99px; background:var(--ac-track); z-index:0; }
+.milestone{ position:relative; z-index:1; cursor:pointer; text-align:center; }
+.ms-dot{ width:60px; height:60px; border-radius:50%; margin:0 auto .7rem; display:grid; place-content:center; font-size:1.5rem; background:#fff; border:4px solid var(--pvep-blue); box-shadow:0 8px 22px rgba(0,131,199,.18); transition:all .3s var(--ac-ease-bounce); }
+.milestone.done .ms-dot{ background:var(--pvep-green); border-color:var(--pvep-green); color:#fff; transform:scale(1.08); box-shadow:0 12px 28px rgba(0,176,80,.35); }
+.ms-h{ font-family:var(--font-display); font-weight:800; color:var(--pvep-navy); font-size:clamp(.9rem,1.8vw,1.15rem); }
+.ms-sub{ font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; color:var(--pvep-blue); font-weight:700; }
+.ms-body{ font-size:var(--small-size); color:var(--ink-600); line-height:1.4; margin-top:.4rem; max-height:0; overflow:hidden; opacity:0; transition:max-height .4s var(--ac-ease), opacity .4s; }
+.milestone.open .ms-body{ max-height:200px; opacity:1; }
+.road-hint{ text-align:center; color:var(--ink-500); font-size:var(--small-size); margin-top:1.2rem; }
+
+/* ============================================================
+   S14 — Kết nạp + badge + easter egg
+   ============================================================ */
+.medal{ display:flex; flex-direction:column; align-items:center; gap:1rem; text-align:center; max-width:760px; margin-inline:auto; }
+.badge{ width:clamp(120px,18vw,170px); aspect-ratio:1; filter:drop-shadow(0 14px 30px rgba(0,131,199,.3)); }
+.badge .ribbon{ animation:ac-float 5s ease-in-out infinite; transform-origin:center; }
+.rank{ font-family:var(--font-display); font-weight:800; font-size:clamp(1.4rem,4vw,2.6rem); line-height:1.2;
+  background:linear-gradient(120deg,var(--pvep-navy),var(--pvep-blue) 50%,var(--pvep-green));
+  background-size:200% 100%; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.ac-on .rank{ animation:boomIn 1.1s var(--ac-ease-bounce) .2s both, textShine 5s linear 1.4s infinite; }
+.egg-out{ margin-top:.4rem; font-style:italic; color:var(--pvep-blue); font-weight:600; min-height:1.6em; font-size:var(--body-size); }
+
+/* generic interactive-tag */
+.itag{ display:inline-flex; align-items:center; gap:.4rem; font-size:.62rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--pvep-blue); background:rgba(0,131,199,.1); padding:.28rem .7rem; border-radius:999px; }
+.itag::before{ content:""; width:7px; height:7px; border-radius:50%; background:var(--pvep-green); box-shadow:0 0 0 0 rgba(0,176,80,.5); animation:ping 1.8s ease-out infinite; }
+@keyframes ping{ 0%{box-shadow:0 0 0 0 rgba(0,176,80,.5);} 100%{box-shadow:0 0 0 9px rgba(0,176,80,0);} }
+@media (prefers-reduced-motion:reduce){ .itag::before{ animation:none!important; } }
+</style>
+</head>
+<body>
+
+<!-- ============ GLOBAL BACKGROUND (giữ nguyên ảnh nền offshore) ============ -->
+<div class="oilbg" aria-hidden="true">
+  <span class="aurora aurora--1"></span>
+  <span class="aurora aurora--2"></span>
+</div>
+
+<!-- progress bar -->
+<div class="progress"><div class="progress__fill" id="progressFill"></div></div>
+
+<!-- chapter rail (giữ logo + màu thương hiệu) -->
+<nav class="rail" aria-label="Chương">
+  <div class="rail__brand"><span class="rail__logo">LN</span><span class="rail__title">Lan&nbsp;Ngọc&nbsp;2.0</span></div>
+  <div class="rail__sub">Hồ sơ 01 · 🤝</div>
+  <div class="rail__item" data-chapter="0" data-target="0"><span class="dot"></span><span class="rail__num">01</span>Nội quy &amp; lời mở</div>
+  <div class="rail__item" data-chapter="1" data-target="2"><span class="dot"></span><span class="rail__num">02</span>Nhìn lớn, đào sâu</div>
+  <div class="rail__item" data-chapter="2" data-target="5"><span class="dot"></span><span class="rail__num">03</span>Giữ bình yên</div>
+  <div class="rail__item" data-chapter="3" data-target="8"><span class="dot"></span><span class="rail__num">04</span>Nói thẳng ra</div>
+  <div class="rail__item" data-chapter="4" data-target="10"><span class="dot"></span><span class="rail__num">05</span>Buông &amp; làm hoà</div>
+  <div class="rail__item" data-chapter="5" data-target="12"><span class="dot"></span><span class="rail__num">06</span>Nâng cấp 2.0</div>
+</nav>
+
+<!-- slide counter -->
+<div class="counter"><span id="cur">1</span><span class="sep">/</span><span id="tot">15</span></div>
+<div class="hint">← → chuyển slide · Home/End đầu/cuối</div>
+<div class="m-hint" id="mHint"><span class="m-arrow">↕</span> Vuốt để chuyển slide</div>
+
+<!-- ========================= SLIDE 0 — BÌA ========================= -->
+<section class="slide" data-chapter="0" data-hero="1">
+  <div class="slide-content"><div class="wrap" style="text-align:center">
+    <div class="hero__kicker ac-reveal" style="--i:0">Sổ tay nội bộ · Nhóm Công nhân tương lai · Hồ sơ 01/LANNGOC/🤝</div>
+    <h1 class="hero__word flash ac-reveal" style="--i:1">NÂNG CẤP<br>LAN NGỌC</h1>
+    <div class="hero__sub ac-reveal" style="--i:2">Các điều Lan Ngọc đã bị mắng — &amp; hành trình lên bản 2.0</div>
+    <p class="hero__tag jtype" data-text="Mắng vì quý. Hệ số quý luôn ≥ hệ số mắng. 🤝">&nbsp;</p>
+    <div class="hero__meta ac-reveal" style="--i:4">
+      <span class="hero__chip">Người mắng vì quý: <b>tôi</b></span>
+      <span class="hero__chip">Đối tượng nâng cấp: <b>Lan Ngọc · CN tương lai số 01</b></span>
+      <span class="hero__chip">Mức hợp tác: <b>cao (tuỳ tâm trạng)</b></span>
+    </div>
+    <div class="ac-reveal" style="--i:5; margin-top:1.8rem">
+      <button class="btn" id="enterBtn">XEM HỒ SƠ MẮNG →</button>
+    </div>
+  </div></div>
+</section>
+
+<!-- ========================= SLIDE 1 — NỘI QUY ========================= -->
+<section class="slide" data-chapter="0">
+  <div class="slide-content"><div class="wrap">
+    <div class="head-center">
+      <div class="eyebrow ac-reveal" style="--i:0">Nội quy của nhóm</div>
+      <h2 class="s-title ac-reveal" style="--i:1">Tài liệu chỉ <span class="neo">Công nhân tương lai số 01</span> được đọc</h2>
+    </div>
+    <div class="panel rule-card ac-reveal ac-reveal--up" style="--i:2">
+      <p class="lead">Mọi hành vi <b>sưng mặt, im lặng, tự dỗi</b> sau khi đọc đều bị xếp vào <i>“lỗi cần khắc phục ngay”</i> 😤</p>
+      <p class="lead" style="margin-bottom:1.4rem">Sổ tay lập trên tinh thần <b>mắng vì quý</b> — bạn thân mới nói thẳng thế này. Hệ số quý luôn ≥ hệ số mắng. 🤝</p>
+      <div class="tickline" id="ruleTick" role="checkbox" aria-checked="false" tabindex="0">
+        <span class="tickbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span>
+        <span>Đã đọc, sẽ không dỗi</span>
+      </div>
+      <div class="whisper" id="ruleWhisper">…nói dối đấy, kiểu gì cũng dỗi. Nhưng thôi, ghi nhận tinh thần.</div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ========================= SLIDE 2 — ĐIỀU #1 đào sâu ========================= -->
+<section class="slide" data-chapter="1">
+  <div class="slide-content"><div class="wrap">
+    <div class="head-center">
+      <span class="rule-pill ac-pop" style="--i:0">ĐIỀU <span class="n">#1</span></span>
+      <h2 class="s-title ac-reveal" style="--i:1">Đào sâu <span class="neo">1 việc</span> — đừng mở 10 tab</h2>
+      <p class="muted ac-reveal" style="--i:2">Tuần này học vẽ, tuần sau làm bánh, tuần sau nữa đòi mở quán cà phê… chưa kịp mua đồ nghề cái thứ nhất.</p>
+    </div>
+    <div class="flip ac-reveal ac-reveal--up" style="--i:3" id="flip1" tabindex="0" role="button" aria-label="Lật thẻ">
+      <div class="flip__inner">
+        <div class="flip__face flip__front">
+          <span class="flip__tag">Chạm để lật</span>
+          <h3>Chọn 1 thứ, làm sâu tới mức không ai thay được — <span class="neo">kể cả tôi.</span></h3>
+        </div>
+        <div class="flip__face flip__back">
+          <span class="flip__tag">Mặt sau</span>
+          <p class="big">“Cây cao không vì nhiều cành, mà vì rễ cắm sâu.”</p>
+          <p class="small">Bạn thì đang… nhiều cành. 🌿</p>
+        </div>
+      </div>
+    </div>
+    <div class="depthwrap ac-reveal ac-reveal--up" style="--i:4">
+      <div class="depthcard">
+        <h4 class="neo-g">1 việc · rễ sâu</h4>
+        <div class="roots" id="roots"></div>
+      </div>
+      <div class="depthcard">
+        <h4 class="muted">10 việc · cành nông</h4>
+        <div class="spread" id="spread"></div>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ========================= SLIDE 3 — ĐIỀU #2 cân việc lớn/lẻ tẻ ========================= -->
+<section class="slide" data-chapter="1">
+  <div class="slide-content"><div class="wrap">
+    <div class="head-center">
+      <span class="rule-pill ac-pop" style="--i:0">ĐIỀU <span class="n">#2</span></span>
+      <h2 class="s-title ac-reveal" style="--i:1">Nhìn việc lớn — đừng sa vào <span class="neo">việc lẻ tẻ</span></h2>
+      <p class="muted ac-reveal" style="--i:2">Hỏi trước khi lao vào: <i>“chuyện này 1 tháng nữa còn quan trọng không?”</i></p>
+    </div>
+    <div class="scale ac-reveal ac-reveal--up" style="--i:3">
+      <div class="beam-rig">
+        <div class="beam" id="beam"></div>
+        <div class="pan pan--big" id="panBig" data-side="big"></div>
+        <div class="pan pan--petty" id="panPetty" data-side="petty"></div>
+        <div class="fulcrum"></div>
+      </div>
+      <div class="scale-hint">Chạm 1 món → rồi chạm vào bên cân để xếp. Bỏ nhầm việc lẻ tẻ sang “Lớn” thì cân sẽ phản đối.</div>
+      <div class="tray" id="tray">
+        <button class="item" data-cat="big">Mục tiêu năm</button>
+        <button class="item" data-cat="big">Sức khoẻ</button>
+        <button class="item" data-cat="big">Người quan trọng</button>
+        <button class="item" data-cat="petty">Ai rửa bát</button>
+        <button class="item" data-cat="petty">Sai chính tả trong group</button>
+        <button class="item" data-cat="petty">Story ám chỉ ai</button>
+        <button class="item" data-cat="petty">Hơn thua vặt</button>
+      </div>
+      <div class="scale-msg" id="scaleMsg">&nbsp;</div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ========================= SLIDE 4 — ĐIỀU #3 năng lượng/drama ========================= -->
+<section class="slide" data-chapter="1">
+  <div class="slide-content"><div class="wrap">
+    <div class="head-center">
+      <span class="rule-pill ac-pop" style="--i:0">ĐIỀU <span class="n">#3</span></span>
+      <h2 class="s-title ac-reveal" style="--i:1">Bớt hao tổn vì <span class="neo">drama ngoài kia</span></h2>
+      <p class="muted ac-reveal" style="--i:2">Chuyện nhà người ta hay tới đâu cũng không bằng giấc ngủ ngon của mình.</p>
+    </div>
+    <div class="energy-wrap ac-reveal ac-reveal--up" style="--i:3">
+      <div class="gauge"><div class="gauge__fill" id="enFill"><span class="gauge__num" id="enNum">100%</span></div></div>
+      <div class="energy-status" id="enStatus">Năng lượng đầy. Cuối tháng vẫn được trả lương, về nhà vẫn có cơm — vui vẻ sống tiếp.</div>
+      <div class="energy-row">
+        <button class="btn btn--ghost" id="enDrama">Hóng 1 drama 👀</button>
+        <button class="btn" id="enRest">Đi ngủ / nghỉ ngơi 😌</button>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ========================= SLIDE 5 — ĐIỀU #4 tắt thông báo ========================= -->
+<section class="slide" data-chapter="2">
+  <div class="slide-content"><div class="wrap">
+    <div class="head-center">
+      <span class="rule-pill ac-pop" style="--i:0">ĐIỀU <span class="n">#4</span></span>
+      <h2 class="s-title ac-reveal" style="--i:1">Tránh 80% rắc rối bằng cách… <span class="neo">không tham gia</span></h2>
+    </div>
+    <div class="notif">
+      <div class="donut ac-pop" style="--i:2">
+        <svg viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="var(--ac-track)" stroke-width="13"/>
+          <circle class="ac-ring-val" cx="60" cy="60" r="50" fill="none" stroke="var(--pvep-blue)" stroke-width="13" stroke-linecap="round" style="--circ:314.159; --p:.8; --i:3"/>
+        </svg>
+        <div class="donut__num"><b>80%</b><span>rắc rối né được</span></div>
+      </div>
+      <div class="notif-stage ac-reveal ac-reveal--right" style="--i:4">
+        <p class="lead" style="margin-bottom:.4rem">Story người yêu cũ của bạn của bạn, livestream drama 11h đêm, group 200 tin chưa đọc — <b>không liên quan tới hạnh phúc của mình.</b></p>
+        <div class="drama-cloud" id="dramaCloud">
+          <span class="drama" style="--fx:-80px;--fr:-25deg">💬 200 tin</span>
+          <span class="drama" style="--fx:40px;--fr:18deg">📺 livestream</span>
+          <span class="drama" style="--fx:-30px;--fr:30deg">👀 hóng</span>
+          <span class="drama" style="--fx:90px;--fr:-15deg">🗣️ bàn tán</span>
+          <span class="drama" style="--fx:-110px;--fr:12deg">📱 story 11h</span>
+        </div>
+        <button class="btn" id="muteBtn">Tắt thông báo hết 🔕</button>
+        <p class="calm-note" id="calmNote">Thả nhẹ điện thoại xuống, ngẩng đầu lên — mặt trời vẫn đẹp. ☀️</p>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ========================= SLIDE 6 — ĐIỀU #5 vòng quay sở thích ========================= -->
+<section class="slide" data-chapter="2">
+  <div class="slide-content"><div class="wrap">
+    <div class="head-center">
+      <span class="rule-pill ac-pop" style="--i:0">ĐIỀU <span class="n">#5</span></span>
+      <h2 class="s-title ac-reveal" style="--i:1">Nuôi một <span class="neo-g">sở thích</span> cho riêng mình</h2>
+      <p class="muted ac-reveal" style="--i:2">(Lưu ý: shopping online tính là thể thao mạo hiểm, không tính là sở thích.)</p>
+    </div>
+    <div class="wheel-wrap ac-reveal ac-reveal--up" style="--i:3">
+      <div class="wheel-box">
+        <div class="wheel-pointer"></div>
+        <svg class="wheel" id="wheel" viewBox="0 0 100 100" aria-label="Vòng quay sở thích"></svg>
+        <div class="wheel-hub">🌿</div>
+      </div>
+      <div>
+        <div class="wheel-result" id="wheelResult">Bấm để quay nhé →</div>
+        <div style="margin-top:1rem"><button class="btn" id="spinBtn">Quay “sở thích lành mạnh hôm nay”</button></div>
+        <div class="wheel-add">
+          <input class="field" id="hobbyInput" placeholder="Thêm sở thích của bạn…" maxlength="22" aria-label="Thêm sở thích">
+          <button class="btn btn--ghost" id="hobbyAdd">Thêm vào vòng quay</button>
+        </div>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ========================= SLIDE 7 — ĐIỀU #6 không làm hài lòng cả thế giới ========================= -->
+<section class="slide" data-chapter="2">
+  <div class="slide-content"><div class="wrap">
+    <div class="head-center">
+      <span class="rule-pill ac-pop" style="--i:0">ĐIỀU <span class="n">#6</span></span>
+      <h2 class="s-title ac-reveal" style="--i:1">Không sống để làm hài lòng <span class="neo">cả thế giới</span></h2>
+    </div>
+    <div class="flip ac-reveal ac-reveal--up" style="--i:2" id="flip2" tabindex="0" role="button" aria-label="Lật thẻ">
+      <div class="flip__inner">
+        <div class="flip__face flip__front">
+          <span class="flip__tag">Chạm để lật</span>
+          <h3>Không cần ai cũng yêu quý — kệ thiên hạ, <span class="neo">sống cho mình đã.</span></h3>
+          <p>Giữ vững nội tâm, sóng gió bên ngoài cứ để nó… ngoài kia.</p>
+        </div>
+        <div class="flip__face flip__back">
+          <span class="flip__tag">Mặt sau</span>
+          <p class="big">Mục tiêu: làm vừa lòng <u>1 người</u> — chính là Lan Ngọc.</p>
+          <p class="small">Khen chê của thiên hạ là chuyện phụ.</p>
+        </div>
+      </div>
+    </div>
+    <p class="muted ac-reveal" style="--i:3; text-align:center; margin-top:1rem">Càng cố vừa lòng nhiều người, “năng lượng cho mình” càng tụt:</p>
+    <div class="curve ac-reveal ac-reveal--up" style="--i:4" id="approvalCurve"></div>
+    <div style="display:flex;justify-content:space-between;max-width:560px;margin:2rem auto 0;font-size:.7rem;color:var(--ink-500)">
+      <span>vừa lòng 1 người</span><span>…cả thế giới</span>
+    </div>
+  </div></div>
+</section>
+
+<!-- ========================= SLIDE 8 — ĐIỀU #7 kỳ vọng / nói thẳng ========================= -->
+<section class="slide" data-chapter="3">
+  <div class="slide-content"><div class="wrap">
+    <div class="head-center">
+      <span class="rule-pill ac-pop" style="--i:0">ĐIỀU <span class="n">#7</span></span>
+      <h2 class="s-title ac-reveal" style="--i:1">Đừng kỳ vọng quá cao — <span class="neo">dựa vào chính mình trước</span></h2>
+      <p class="muted ac-reveal" style="--i:2">Có gì khó chịu thì <b>nói thẳng</b>, đừng để người ta đoán 3 ngày. Kỳ vọng càng cụ thể, đỡ hờn càng nhanh.</p>
+    </div>
+    <div class="panel input-card ac-reveal ac-reveal--up" style="--i:3">
+      <label for="annoyInput" style="font-weight:700;color:var(--pvep-navy);display:block;margin-bottom:.6rem">Hôm nay bạn khó chịu vì: ___</label>
+      <input class="field" id="annoyInput" style="width:100%" placeholder="Gõ ra đây, hoặc chọn nhanh bên dưới…" aria-label="Hôm nay khó chịu vì">
+      <div class="chips" id="annoyChips">
+        <span class="qchip">bị rep tin nhắn cụt lủn</span>
+        <span class="qchip">kế hoạch bị đổi phút chót</span>
+        <span class="qchip">không ai hỏi ý kiến mình</span>
+        <span class="qchip">mệt mà chưa ai nhận ra</span>
+        <span class="qchip">tự ôm việc rồi tủi thân</span>
+      </div>
+      <p class="say-out" id="annoyOut">&nbsp;</p>
+    </div>
+  </div></div>
+</section>
+
+<!-- ========================= SLIDE 9 — ĐIỀU #8 không sưng mặt ⭐ ========================= -->
+<section class="slide" data-chapter="3">
+  <div class="slide-content"><div class="wrap">
+    <div class="head-center">
+      <span class="rule-pill ac-pop" style="--i:0">ĐIỀU <span class="n">#8</span> ⭐</span>
+      <h2 class="s-title ac-reveal" style="--i:1">Không sưng mặt, không <span class="neo">im lặng tự dỗi</span></h2>
+      <p class="muted ac-reveal" style="--i:2">Giận thì nói. Đừng bật chế độ “không có gì đâu” rồi để người ta tự đoán 3 ngày. Tôi không phải nhà ngoại cảm.</p>
+    </div>
+    <div class="face-wrap ac-reveal ac-reveal--up" style="--i:3">
+      <svg class="face" id="face" viewBox="0 0 200 200" aria-label="Khuôn mặt sưng">
+        <circle cx="100" cy="100" r="78" fill="#FFE7B3" stroke="#E9b949" stroke-width="3"/>
+        <ellipse class="cheek cheek-l" cx="60" cy="120" rx="22" ry="20" fill="#FFB4A8" opacity=".75"/>
+        <ellipse class="cheek cheek-r" cx="140" cy="120" rx="22" ry="20" fill="#FFB4A8" opacity=".75"/>
+        <rect class="brow brow-l" x="58" y="74" width="26" height="6" rx="3" fill="#5a4632"/>
+        <rect class="brow brow-r" x="116" y="74" width="26" height="6" rx="3" fill="#5a4632"/>
+        <circle cx="71" cy="96" r="6.5" fill="#3a2e22"/>
+        <circle cx="129" cy="96" r="6.5" fill="#3a2e22"/>
+        <path class="mouth" id="mouth" d="M74 142 Q100 128 126 142" fill="none" stroke="#7a3b2e" stroke-width="6" stroke-linecap="round"/>
+      </svg>
+      <button class="btn" id="cheekBtn">Hạ má xuống ⬇</button>
+      <div class="face-out" id="faceOut">Đang giận à? Bấm nút trên, rồi chọn nhanh lý do bên dưới.</div>
+      <div class="chips" id="angryChips" style="justify-content:center;max-width:680px">
+        <span class="qchip">tôi nói chuyện cộc</span>
+        <span class="qchip">tôi quên mất việc bạn dặn</span>
+        <span class="qchip">tôi đùa hơi quá</span>
+        <span class="qchip">bạn mệt sẵn từ trước</span>
+        <span class="qchip">đói (case phổ biến nhất)</span>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ========================= SLIDE 10 — ĐIỀU #9 buông bỏ ========================= -->
+<section class="slide" data-chapter="4">
+  <div class="slide-content"><div class="wrap">
+    <div class="head-center">
+      <span class="rule-pill ac-pop" style="--i:0">ĐIỀU <span class="n">#9</span></span>
+      <h2 class="s-title ac-reveal" style="--i:1">Học cách <span class="neo">buông bỏ</span></h2>
+      <p class="muted ac-reveal" style="--i:2">Nhẹ lòng là dạng tự do cao cấp nhất mà tiền không mua được. Xoá từng món đi nào.</p>
+    </div>
+    <div class="letgo ac-reveal ac-reveal--up" style="--i:3" id="letgo">
+      <div class="lg-item"><span>Cái áo 3 năm chưa mặc</span><button class="lg-x" aria-label="Buông">×</button></div>
+      <div class="lg-item"><span>Tin nhắn cũ đọc đi đọc lại</span><button class="lg-x" aria-label="Buông">×</button></div>
+      <div class="lg-item"><span>Lần tôi lỡ miệng làm bạn giận hồi nào đó <i>(cho qua nha 🥺)</i></span><button class="lg-x" aria-label="Buông">×</button></div>
+      <div class="lg-item"><span>Quá khứ không sửa được nữa</span><button class="lg-x" aria-label="Buông">×</button></div>
+      <div class="lg-item"><span>Kỳ vọng người khác phải đoán đúng ý mình</span><button class="lg-x" aria-label="Buông">×</button></div>
+    </div>
+    <div class="lighter" id="lighter">&nbsp;</div>
+  </div></div>
+</section>
+
+<!-- ========================= SLIDE 11 — ĐIỀU #10 làm hoà với chính mình ========================= -->
+<section class="slide" data-chapter="4">
+  <div class="slide-content"><div class="wrap">
+    <div class="head-center">
+      <span class="rule-pill ac-pop" style="--i:0">ĐIỀU <span class="n">#10</span></span>
+      <h2 class="s-title ac-reveal" style="--i:1">Làm hoà với <span class="neo-g">chính mình</span></h2>
+      <p class="muted ac-reveal" style="--i:2">Thôi so sánh, thôi tự trách. Bạn đủ tốt rồi — tôi xác nhận, với tư cách đứa bạn hay soi nhất.</p>
+    </div>
+    <div class="praise-stage ac-reveal ac-reveal--up" style="--i:3">
+      <div class="praise-bubble" id="praiseBubble">“Bạn đủ tốt rồi.” — Bấm nút để nghe thêm 1 câu thật lòng 👇</div>
+      <div style="margin-top:1.2rem"><button class="btn" id="praiseBtn">Tự khen 1 câu ✨</button></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ========================= SLIDE 12 — CHECKLIST + % ========================= -->
+<section class="slide" data-chapter="5">
+  <div class="slide-content"><div class="wrap">
+    <div class="head-center">
+      <div class="eyebrow ac-reveal" style="--i:0">8 điều ghim vào tim</div>
+      <h2 class="s-title ac-reveal" style="--i:1">Checklist: điều Lan Ngọc <span class="neo">cần nhớ</span></h2>
+    </div>
+    <div class="check-grid ac-reveal ac-reveal--up" style="--i:2" id="checkGrid">
+      <div class="cl" role="checkbox" aria-checked="false" tabindex="0"><span class="tickbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span>Nhìn việc lớn — bỏ qua việc lẻ tẻ không đáng</span></div>
+      <div class="cl" role="checkbox" aria-checked="false" tabindex="0"><span class="tickbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span>Mỗi ngày 1 sở thích lành mạnh</span></div>
+      <div class="cl" role="checkbox" aria-checked="false" tabindex="0"><span class="tickbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span>Không hóng drama không liên quan</span></div>
+      <div class="cl star" role="checkbox" aria-checked="false" tabindex="0"><span class="tickbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span><b>Giận thì nói ra — không sưng mặt, không im lặng tự dỗi</b> ⭐</span></div>
+      <div class="cl" role="checkbox" aria-checked="false" tabindex="0"><span class="tickbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span>Khó chịu với ai thì nói thẳng, đừng để người ta đoán</span></div>
+      <div class="cl" role="checkbox" aria-checked="false" tabindex="0"><span class="tickbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span>Buông 1 thứ cũ mỗi tuần</span></div>
+      <div class="cl" role="checkbox" aria-checked="false" tabindex="0"><span class="tickbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span>Tự khen mình 1 câu/ngày</span></div>
+      <div class="cl" role="checkbox" aria-checked="false" tabindex="0"><span class="tickbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span>Nhớ rằng mình đủ tốt rồi</span></div>
+    </div>
+    <div class="upgrade ac-reveal ac-reveal--up" style="--i:3">
+      <div class="upgrade__top"><b>% Nâng cấp Lan Ngọc</b><span class="upgrade__pct" id="upPct">0%</span></div>
+      <div class="upgrade__bar"><div class="upgrade__fill" id="upFill"></div></div>
+      <div class="upgrade__msg" id="upMsg">Tick từng ô để chạy thanh nâng cấp.</div>
+    </div>
+  </div></div>
+</section>
+
+<!-- ========================= SLIDE 13 — ROADMAP ========================= -->
+<section class="slide" data-chapter="5">
+  <div class="slide-content"><div class="wrap">
+    <div class="head-center">
+      <div class="eyebrow ac-reveal" style="--i:0">Roadmap 4 chặng</div>
+      <h2 class="s-title ac-reveal" style="--i:1">Hành trình <span class="neo">Lan Ngọc 2.0</span></h2>
+    </div>
+    <div class="road ac-reveal ac-reveal--up" style="--i:2" id="road">
+      <div class="milestone" tabindex="0" role="button">
+        <div class="ms-dot">🌱</div>
+        <div class="ms-sub">Tháng 1</div>
+        <div class="ms-h">Nền tảng</div>
+        <div class="ms-body">Lọc việc lẻ tẻ, đi bộ 15p/ngày, tắt thông báo drama. Tập “nói ra trong 10 phút” thay vì “ủ mưu 3 ngày”.</div>
+      </div>
+      <div class="milestone" tabindex="0" role="button">
+        <div class="ms-dot">🎯</div>
+        <div class="ms-sub">Tháng 2</div>
+        <div class="ms-h">Tập trung</div>
+        <div class="ms-body">Chọn <b>1</b> sở thích / kỹ năng và làm đều đặn. Bớt mở thêm tab mới.</div>
+      </div>
+      <div class="milestone" tabindex="0" role="button">
+        <div class="ms-dot">🧘</div>
+        <div class="ms-sub">Tháng 3</div>
+        <div class="ms-h">Nội tâm</div>
+        <div class="ms-body">Mỗi ngày 1 lời tự khen, buông 1 thứ/tuần, bớt so sánh với người khác.</div>
+      </div>
+      <div class="milestone" tabindex="0" role="button">
+        <div class="ms-dot">🏔️</div>
+        <div class="ms-sub">Tháng 4</div>
+        <div class="ms-h">Bản lĩnh</div>
+        <div class="ms-body">Dám đối diện điều mình sợ. Khen chê của người ngoài chỉ là nhất thời; giá trị tự thân mới theo mình lâu dài.</div>
+      </div>
+    </div>
+    <div class="road-hint">Chạm mỗi mốc để mở chi tiết · chạm lần nữa để đánh dấu <b>hoàn thành</b> (mốc chuyển xanh).</div>
+  </div></div>
+</section>
+
+<!-- ========================= SLIDE 14 — KẾT NẠP ========================= -->
+<section class="slide" data-chapter="5">
+  <div class="slide-content"><div class="wrap">
+    <div class="medal">
+      <svg class="badge ac-pop" style="--i:0" viewBox="0 0 120 120" aria-label="Huy hiệu">
+        <path class="ribbon" d="M44 78 L34 116 L52 104 L60 118 L68 104 L86 116 L76 78 Z" fill="var(--pvep-blue)"/>
+        <circle cx="60" cy="50" r="40" fill="url(#mg)" stroke="#fff" stroke-width="4"/>
+        <circle cx="60" cy="50" r="33" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2" stroke-dasharray="3 5"/>
+        <path d="M60 30 l5.3 11 12 1.6 -8.8 8.3 2.3 11.9 -10.8-5.8 -10.8 5.8 2.3-11.9 -8.8-8.3 12-1.6 z" fill="#fff"/>
+        <defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--pvep-blue)"/><stop offset="1" stop-color="var(--pvep-green)"/></linearGradient></defs>
+      </svg>
+      <div class="eyebrow ac-reveal" style="--i:1">Kết nạp chính thức</div>
+      <div class="rank">CÔNG NHÂN TƯƠNG LAI ƯU TÚ 🏅</div>
+      <p class="lead ac-reveal" style="--i:2">Lan Ngọc: <b>đạt</b> — còn vài điều nhỏ để hoàn thiện. Sổ tay này không nhằm thay đổi bạn, chỉ là kiểu bạn thân hay càm ràm vì để ý từng chuyện nhỏ, kể cả lúc mắng.</p>
+      <button class="btn ac-reveal" style="--i:3" id="eggBtn">Cho qua mấy lần tôi lỡ mồm nha 🤝</button>
+      <div class="egg-out" id="eggOut">&nbsp;</div>
+    </div>
+  </div></div>
+</section>
+
+<script>
+/* =====================================================================
+   activate.js — adds .ac-on when a slide is visible; count-up; replays.
+   ===================================================================== */
+(function () {
+  "use strict";
+  var SLIDE_SELECTOR = ".slide";
+  var VISIBLE_RATIO  = 0.55;
+  var reduceMotion   = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+  function formatNum(v, d){ return Number(v).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}); }
+  function runCount(el){
+    var to=parseFloat(el.getAttribute("data-count-to")); if(isNaN(to))return;
+    var from=parseFloat(el.getAttribute("data-count-from"))||0, dur=parseFloat(el.getAttribute("data-count-dur"))||1400;
+    var dec=parseInt(el.getAttribute("data-count-decimals")||"0",10), pre=el.getAttribute("data-count-prefix")||"", suf=el.getAttribute("data-count-suffix")||"";
+    if(reduceMotion){ el.textContent=pre+formatNum(to,dec)+suf; return; }
+    var start=null; if(el._raf) cancelAnimationFrame(el._raf);
+    function step(ts){ if(start===null)start=ts; var p=Math.min((ts-start)/dur,1); el.textContent=pre+formatNum(from+(to-from)*easeOutCubic(p),dec)+suf; if(p<1) el._raf=requestAnimationFrame(step); }
+    el._raf=requestAnimationFrame(step);
+  }
+  function resetCount(el){ if(el._raf)cancelAnimationFrame(el._raf);
+    var from=parseFloat(el.getAttribute("data-count-from"))||0, dec=parseInt(el.getAttribute("data-count-decimals")||"0",10), pre=el.getAttribute("data-count-prefix")||"", suf=el.getAttribute("data-count-suffix")||"";
+    el.textContent=pre+formatNum(from,dec)+suf;
+  }
+  function activate(s){ if(s.hasAttribute("data-hero"))document.body.classList.add("hero-active");
+    if(s.classList.contains("ac-on"))return; s.classList.add("ac-on");
+    var n=s.querySelectorAll("[data-count-to]"); for(var i=0;i<n.length;i++)runCount(n[i]); }
+  function deactivate(s){ if(s.hasAttribute("data-hero"))document.body.classList.remove("hero-active");
+    s.classList.remove("ac-on"); var n=s.querySelectorAll("[data-count-to]"); for(var i=0;i<n.length;i++)resetCount(n[i]); }
+  function init(){
+    var slides=document.querySelectorAll(SLIDE_SELECTOR); if(!slides.length)return;
+    var all=document.querySelectorAll("[data-count-to]"); for(var n=0;n<all.length;n++)resetCount(all[n]);
+    if(!("IntersectionObserver" in window)){ for(var k=0;k<slides.length;k++)activate(slides[k]); return; }
+    var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting&&e.intersectionRatio>=VISIBLE_RATIO)activate(e.target); else deactivate(e.target); }); },{threshold:[0,VISIBLE_RATIO,1]});
+    for(var s=0;s<slides.length;s++)io.observe(slides[s]);
+  }
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init); else init();
+})();
+
+/* =====================================================================
+   Deck controller — chapter rail, counter, progress, keyboard, swipe.
+   ===================================================================== */
+(function(){
+  var slides=[].slice.call(document.querySelectorAll(".slide"));
+  var total=slides.length;
+  var railItems=[].slice.call(document.querySelectorAll(".rail__item"));
+  var curEl=document.getElementById("cur"), totEl=document.getElementById("tot"), fill=document.getElementById("progressFill");
+  var current=0; totEl.textContent=total;
+  function setCurrent(i){ current=Math.max(0,Math.min(total-1,i)); curEl.textContent=current+1; fill.style.width=((current+1)/total*100)+"%";
+    var ch=slides[current].getAttribute("data-chapter");
+    railItems.forEach(function(el){ el.classList.toggle("is-active",el.getAttribute("data-chapter")===ch); }); }
+  function goTo(i){ var t=Math.max(0,Math.min(total-1,i)); slides[t].scrollIntoView({behavior:"smooth",block:"start"}); setCurrent(t); }
+  window.__deckGoTo=goTo;
+  var io2=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting&&e.intersectionRatio>=0.55){ var idx=slides.indexOf(e.target); if(idx>=0)setCurrent(idx); } }); },{threshold:[0.55]});
+  slides.forEach(function(s){ io2.observe(s); });
+  document.addEventListener("keydown",function(e){
+    var tag=(e.target&&e.target.tagName)||""; if(tag==="INPUT"||tag==="TEXTAREA")return;
+    if(["ArrowRight","ArrowDown","PageDown"," "].indexOf(e.key)!==-1){ e.preventDefault(); goTo(current+1); }
+    else if(["ArrowLeft","ArrowUp","PageUp"].indexOf(e.key)!==-1){ e.preventDefault(); goTo(current-1); }
+    else if(e.key==="Home"){ e.preventDefault(); goTo(0); }
+    else if(e.key==="End"){ e.preventDefault(); goTo(total-1); }
+  });
+  railItems.forEach(function(el){ el.addEventListener("click",function(){ goTo(parseInt(el.getAttribute("data-target"),10)); }); });
+  (function(){
+    var sx=0,sy=0,tracking=false,cooldown=0,THRESH=45,hint=document.getElementById("mHint");
+    function hideHint(){ if(hint)hint.classList.add("is-hidden"); }
+    if(hint)setTimeout(hideHint,7000);
+    document.addEventListener("touchstart",function(e){ if(e.touches.length!==1){tracking=false;return;} sx=e.touches[0].clientX; sy=e.touches[0].clientY; tracking=true; },{passive:true});
+    document.addEventListener("touchend",function(e){ if(!tracking)return; tracking=false; if(Date.now()<cooldown)return;
+      var t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;
+      if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>THRESH){ hideHint(); cooldown=Date.now()+450; goTo(dx<0?current+1:current-1); }
+      else if(Math.abs(dy)>THRESH){ hideHint(); } },{passive:true});
+  })();
+  setCurrent(0);
+})();
+
+/* =====================================================================
+   Typewriter for hero tagline
+   ===================================================================== */
+(function(){
+  function type(el){ var full=el.getAttribute("data-text"),i=0; el.textContent=""; el.classList.add("ac-caret");
+    (function tick(){ if(i<=full.length){ el.textContent=full.slice(0,i++); setTimeout(tick,38); } else { setTimeout(function(){ el.classList.remove("ac-caret"); },1200); } })(); }
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ type(e.target); } else { e.target.textContent=""; } }); },{threshold:.6});
+  document.querySelectorAll(".jtype").forEach(function(el){ io.observe(el); });
+})();
+
+/* small confetti helper (no-op safe if lib missing) */
+function boom(opts){ if(typeof confetti!=="function") return; confetti(Object.assign({particleCount:90,spread:70,origin:{y:.7},colors:["#0083C7","#00B050","#0A2A4A","#1D4ED8"]},opts||{})); }
+
+/* S0 — enter button */
+(function(){ var b=document.getElementById("enterBtn"); if(b)b.addEventListener("click",function(){ if(window.__deckGoTo)window.__deckGoTo(1); }); })();
+
+/* S1 — nội quy tick */
+(function(){
+  var t=document.getElementById("ruleTick"), w=document.getElementById("ruleWhisper"); if(!t)return;
+  function toggle(){ var on=t.classList.toggle("on"); t.setAttribute("aria-checked",on?"true":"false"); w.classList.toggle("show",on); if(on)boom({particleCount:40,spread:55,scalar:.8}); }
+  t.addEventListener("click",toggle);
+  t.addEventListener("keydown",function(e){ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); toggle(); } });
+})();
+
+/* S2 — flip cards + depth bars */
+(function(){
+  ["flip1","flip2"].forEach(function(id){ var f=document.getElementById(id); if(!f)return;
+    function flip(){ f.classList.toggle("flipped"); }
+    f.addEventListener("click",flip);
+    f.addEventListener("keydown",function(e){ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); flip(); } });
+  });
+  var roots=document.getElementById("roots"), spread=document.getElementById("spread");
+  if(roots){ var rh=[40,70,100,75,55]; rh.forEach(function(h){ var d=document.createElement("i"); d.className="root"; d.style.cssText="display:block;height:"+h+"%"; roots.appendChild(d); }); }
+  if(spread){ for(var i=0;i<10;i++){ var d=document.createElement("i"); d.className="twig"; d.style.cssText="display:block;height:"+(14+Math.random()*16)+"%"; spread.appendChild(d); } }
+})();
+
+/* S3 — cân việc lớn vs lẻ tẻ (tap-to-sort) */
+(function(){
+  var tray=document.getElementById("tray"), beam=document.getElementById("beam");
+  var panBig=document.getElementById("panBig"), panPetty=document.getElementById("panPetty"), msg=document.getElementById("scaleMsg");
+  if(!tray)return;
+  var selected=null;
+  function tilt(){ var b=panBig.querySelectorAll(".item").length, p=panPetty.querySelectorAll(".item").length;
+    var diff=Math.max(-3,Math.min(3,p-b)); beam.style.transform="translateX(-50%) rotate("+(diff*5)+"deg)";
+    panBig.style.transform="translateY("+(-diff*7)+"px)"; panPetty.style.transform="translateY("+(diff*7)+"px)"; }
+  function clearSel(){ if(selected){ selected.classList.remove("sel"); selected=null; } }
+  tray.addEventListener("click",function(e){ var it=e.target.closest(".item"); if(!it||it.classList.contains("placed"))return;
+    if(selected===it){ clearSel(); return; } clearSel(); selected=it; it.classList.add("sel"); msg.style.color="var(--ink-500)"; msg.textContent="Đã chọn “"+it.textContent+"”. Giờ chạm vào một bên cân."; });
+  function drop(pan){ return function(){ if(!selected)return; var it=selected, cat=it.getAttribute("data-cat"), side=pan.getAttribute("data-side");
+      if(cat==="petty"&&side==="big"){ pan.classList.add("bad"); msg.style.color="var(--danger)"; msg.textContent="“"+it.textContent+"” — cái này không đáng đâu. Để bên Lẻ tẻ thôi."; setTimeout(function(){ pan.classList.remove("bad"); },500); return; }
+      it.classList.remove("sel"); it.classList.add("placed"); pan.appendChild(it); selected=null; tilt();
+      if(side==="big"){ msg.style.color="var(--success)"; msg.textContent="Chuẩn — để sức cho việc lớn. 👍"; } else { msg.style.color="var(--ink-600)"; msg.textContent="Việc lẻ tẻ → cho qua, đừng ngốn cả ngày."; }
+      if(!tray.querySelector(".item:not(.placed)")){ msg.style.color="var(--pvep-blue)"; msg.textContent="Phân loại xong! Cân nghiêng về việc lẻ tẻ vì… đời nhiều chuyện vặt thật. Nhưng giờ bạn thấy rõ cái nào đáng rồi."; boom({particleCount:50,spread:60}); } }; }
+  panBig.addEventListener("click",drop(panBig)); panPetty.addEventListener("click",drop(panPetty));
+})();
+
+/* S4 — energy meter */
+(function(){
+  var fill=document.getElementById("enFill"), num=document.getElementById("enNum"), st=document.getElementById("enStatus");
+  var d=document.getElementById("enDrama"), r=document.getElementById("enRest"); if(!fill)return;
+  var e=100;
+  function render(){ e=Math.max(0,Math.min(100,e)); fill.style.width=e+"%"; num.textContent=Math.round(e)+"%";
+    var col= e>60?"linear-gradient(90deg,var(--pvep-green),var(--pvep-blue))": e>30?"linear-gradient(90deg,#EAB308,#EA580C)":"linear-gradient(90deg,#EF4444,#B91C1C)";
+    fill.style.background=col;
+    st.textContent= e>70?"Năng lượng đầy. Mỉm cười cho qua, ngủ ngon là thắng." : e>40?"Bắt đầu hao rồi đấy. Drama lấy đi nhiều hơn nó cho." : e>10?"Tụt về đỏ. Cái story đó có nuôi bạn được bữa nào không?" : "Cạn kiệt 😵 Bỏ điện thoại xuống, đi ngủ ngay.";
+  }
+  d.addEventListener("click",function(){ e-=18; render(); });
+  r.addEventListener("click",function(){ e+=26; render(); if(e>=100)boom({particleCount:40,spread:55,scalar:.8}); });
+  render();
+})();
+
+/* S5 — tắt thông báo */
+(function(){
+  var btn=document.getElementById("muteBtn"), cloud=document.getElementById("dramaCloud"), note=document.getElementById("calmNote"); if(!btn)return;
+  btn.addEventListener("click",function(){ [].slice.call(cloud.querySelectorAll(".drama")).forEach(function(d,i){ setTimeout(function(){ d.classList.add("fly"); },i*90); });
+    setTimeout(function(){ note.classList.add("show"); btn.textContent="Nhẹ cả người 😌"; btn.disabled=true; btn.style.opacity=".7"; },520); });
+})();
+
+/* S6 — vòng quay sở thích */
+(function(){
+  var svg=document.getElementById("wheel"), btn=document.getElementById("spinBtn"), res=document.getElementById("wheelResult");
+  var input=document.getElementById("hobbyInput"), add=document.getElementById("hobbyAdd"); if(!svg)return;
+  var items=["Tưới cây 🌿","Pha trà 🍵","Đi bộ 🚶","Đọc 10 trang 📖","Nghe nhạc 🎧","Vẽ nguệch ngoạc ✏️"];
+  var colors=["#0083C7","#00B050","#0A2A4A","#1D4ED8","#0EA5A0","#2563EB"];
+  var rot=0, spinning=false;
+  function draw(){ svg.innerHTML=""; var n=items.length, step=360/n, cx=50,cy=50,r=50;
+    for(var i=0;i<n;i++){ var a0=(i*step-90)*Math.PI/180, a1=((i+1)*step-90)*Math.PI/180;
+      var x0=cx+r*Math.cos(a0), y0=cy+r*Math.sin(a0), x1=cx+r*Math.cos(a1), y1=cy+r*Math.sin(a1);
+      var p=document.createElementNS("http://www.w3.org/2000/svg","path");
+      p.setAttribute("d","M"+cx+" "+cy+" L"+x0.toFixed(2)+" "+y0.toFixed(2)+" A"+r+" "+r+" 0 0 1 "+x1.toFixed(2)+" "+y1.toFixed(2)+" Z");
+      p.setAttribute("fill",colors[i%colors.length]); p.setAttribute("opacity", i%2?".88":"1"); svg.appendChild(p);
+    }
+  }
+  function spin(){ if(spinning)return; spinning=true; res.textContent="Đang quay…";
+    var n=items.length, pick=Math.floor(Math.random()*n), step=360/n;
+    var target=360*5 + (360 - (pick*step + step/2)); rot+=target;
+    svg.style.transform="rotate("+rot+"deg)";
+    setTimeout(function(){ spinning=false; res.textContent=items[pick]; boom({particleCount:50,spread:60}); },4300);
+  }
+  draw(); btn.addEventListener("click",spin);
+  add.addEventListener("click",function(){ var v=(input.value||"").trim(); if(!v)return; items.push(v); colors.push("#"+Math.floor(Math.random()*0x8+0x2).toString(16)+"6"+Math.floor(Math.random()*9)+"A"); draw(); input.value=""; res.textContent="Đã thêm “"+v+"” 🎉"; });
+  input.addEventListener("keydown",function(e){ if(e.key==="Enter")add.click(); });
+})();
+
+/* S7 — approval curve */
+(function(){
+  var wrap=document.getElementById("approvalCurve"); if(!wrap)return;
+  var vals=[96,88,74,58,40,26,15,8]; vals.forEach(function(v,i){ var b=document.createElement("div"); b.className="cb"+(i>=4?" bad":""); b.style.height=v+"%"; wrap.appendChild(b); });
+})();
+
+/* S8 — khó chịu vì */
+(function(){
+  var input=document.getElementById("annoyInput"), chips=document.getElementById("annoyChips"), out=document.getElementById("annoyOut"); if(!input)return;
+  function say(t){ if(!t){ out.textContent=""; return; } out.textContent="✓ Đã nói thẳng: “"+t+"”. Thấy chưa, nhẹ hơn ủ 3 ngày nhiều."; }
+  input.addEventListener("input",function(){ [].slice.call(chips.children).forEach(function(c){ c.classList.remove("on"); }); say(input.value.trim()); });
+  chips.addEventListener("click",function(e){ var c=e.target.closest(".qchip"); if(!c)return; [].slice.call(chips.children).forEach(function(x){ x.classList.remove("on"); }); c.classList.add("on"); input.value=c.textContent; say(c.textContent); });
+})();
+
+/* S9 — khuôn mặt sưng */
+(function(){
+  var face=document.getElementById("face"), mouth=document.getElementById("mouth"), btn=document.getElementById("cheekBtn"), out=document.getElementById("faceOut"), chips=document.getElementById("angryChips"); if(!face)return;
+  var calm=false;
+  function setCalm(on){ calm=on; face.classList.toggle("calm",on);
+    mouth.setAttribute("d", on?"M72 138 Q100 162 128 138":"M74 142 Q100 128 126 142");
+    if(on){ btn.textContent="Cười rồi nè 😊"; out.textContent="Thấy chưa — nói ra là nhẹ liền. Giờ chọn lý do để tôi biết đường mà sửa 👇"; }
+    else { btn.textContent="Hạ má xuống ⬇"; }
+  }
+  btn.addEventListener("click",function(){ setCalm(!calm); if(!calm===false){} if(face.classList.contains("calm"))boom({particleCount:40,spread:55,scalar:.8}); });
+  chips.addEventListener("click",function(e){ var c=e.target.closest(".qchip"); if(!c)return;
+    [].slice.call(chips.children).forEach(function(x){ x.classList.remove("on"); }); c.classList.add("on");
+    if(!calm)setCalm(true);
+    out.textContent="Ghi nhận: bạn giận vì “"+c.textContent+"”. OK, tôi sửa. Hoà nha 🤝"; });
+})();
+
+/* S10 — buông bỏ (xoá item) */
+(function(){
+  var list=document.getElementById("letgo"), light=document.getElementById("lighter"); if(!list)return;
+  var msgs=["nhẹ hơn rồi nè.","buông được 1 thứ — tự do +1.","đấy, có mất gì đâu.","lòng rộng thêm một chút.","xong, cho qua thật rồi 🤝"];
+  list.addEventListener("click",function(e){ var x=e.target.closest(".lg-x"); if(!x)return; var item=x.closest(".lg-item");
+    item.classList.add("gone"); light.style.color="var(--pvep-green)"; light.textContent=msgs[Math.floor(Math.random()*msgs.length)];
+    setTimeout(function(){ item.classList.add("collapse"); },420);
+    setTimeout(function(){ if(!list.querySelector(".lg-item:not(.gone)")){ light.textContent="Buông hết rồi — nhẹ tênh. Đây mới là tự do cao cấp. ✨"; boom({particleCount:60,spread:70}); } },520);
+  });
+})();
+
+/* S11 — tự khen */
+(function(){
+  var bubble=document.getElementById("praiseBubble"), btn=document.getElementById("praiseBtn"); if(!btn)return;
+  var praises=[
+    "“Bạn để ý người khác tinh lắm — đó là sự dịu dàng, không phải yếu đuối.”",
+    "“Lan Ngọc giận nhanh nhưng thương cũng nhanh. Trộm vía.”",
+    "“Bạn làm gì cũng tới nơi tới chốn khi đã thật sự muốn.”",
+    "“Cười của bạn làm cả phòng dễ thở hơn. Thật đấy.”",
+    "“Bạn mạnh mẽ hơn bạn nghĩ — chỉ là hay quên điều đó.”",
+    "“Đủ tốt rồi. Không cần hơn ai, chỉ cần hơn bạn của hôm qua.”",
+    "“Người tử tế với chính mình mới đi được đường dài. Bạn đang học điều đó.”"
+  ];
+  var last=-1;
+  btn.addEventListener("click",function(){ var i; do{ i=Math.floor(Math.random()*praises.length); }while(i===last&&praises.length>1); last=i;
+    bubble.classList.remove("pop"); void bubble.offsetWidth; bubble.classList.add("pop"); bubble.textContent=praises[i]; boom({particleCount:30,spread:50,scalar:.7}); });
+})();
+
+/* S12 — checklist + % nâng cấp */
+(function(){
+  var grid=document.getElementById("checkGrid"), fill=document.getElementById("upFill"), pct=document.getElementById("upPct"), msg=document.getElementById("upMsg"); if(!grid)return;
+  var cls=[].slice.call(grid.querySelectorAll(".cl")), n=cls.length, fired=false;
+  function update(){ var done=grid.querySelectorAll(".cl.on").length, p=Math.round(done/n*100);
+    fill.style.width=p+"%"; pct.textContent=p+"%";
+    if(p===0)msg.textContent="Tick từng ô để chạy thanh nâng cấp.";
+    else if(p<50){ msg.style.color="var(--pvep-blue)"; msg.textContent="Khởi động tốt. Bản beta vẫn rất đáng yêu."; }
+    else if(p<100){ msg.style.color="var(--caution)"; msg.textContent="Hơn nửa đường rồi — cố nốt nha."; }
+    else { msg.style.color="var(--pvep-green)"; msg.textContent="Phiên bản hoàn hảo — nhưng vẫn quý cả bản beta. 🤝"; if(!fired){ fired=true; boom({particleCount:140,spread:90,startVelocity:45}); setTimeout(function(){ boom({particleCount:80,angle:60,spread:70,origin:{x:0}}); boom({particleCount:80,angle:120,spread:70,origin:{x:1}}); },250); } }
+    if(p<100)fired=false;
+  }
+  cls.forEach(function(c){ function t(){ c.classList.toggle("on"); c.setAttribute("aria-checked",c.classList.contains("on")?"true":"false"); update(); }
+    c.addEventListener("click",t); c.addEventListener("keydown",function(e){ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); t(); } }); });
+  update();
+})();
+
+/* S13 — roadmap: tap = open; tap again = done */
+(function(){
+  var road=document.getElementById("road"); if(!road)return;
+  [].slice.call(road.querySelectorAll(".milestone")).forEach(function(m){
+    function act(){ if(!m.classList.contains("open")){ m.classList.add("open"); } else if(!m.classList.contains("done")){ m.classList.add("done"); boom({particleCount:35,spread:50,scalar:.8}); } else { m.classList.remove("done"); m.classList.remove("open"); } }
+    m.addEventListener("click",act); m.addEventListener("keydown",function(e){ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); act(); } });
+  });
+})();
+
+/* S14 — easter egg */
+(function(){
+  var btn=document.getElementById("eggBtn"), out=document.getElementById("eggOut"); if(!btn)return;
+  var lines=["Cho qua hết. Quý vẫn nguyên, mắng chỉ là phần thêm.","Bản 2.0 hay bản beta gì tôi cũng chọn làm bạn thân.","Lần sau lỡ mồm nữa thì… vẫn mong bạn nói thẳng, đừng dỗi nha. 🤝"];
+  var i=0, done=false;
+  btn.addEventListener("click",function(){
+    rain(); boom({particleCount:120,spread:100,startVelocity:48,colors:["#0083C7","#00B050","#0A2A4A","#1D4ED8","#FACC15"]});
+    out.textContent=lines[Math.min(i,lines.length-1)]; i++;
+    if(i>=lines.length&&!done){ done=true; btn.textContent="Huề cả làng 🤝⭐"; }
+  });
+  function rain(){ var icons=["🤝","⭐"]; for(var k=0;k<22;k++){ (function(k){ var s=document.createElement("span"); s.textContent=icons[k%2];
+    s.style.cssText="position:fixed;z-index:9999;pointer-events:none;left:"+(Math.random()*100)+"vw;top:-40px;font-size:"+(16+Math.random()*20)+"px;transition:transform 2.6s linear,opacity 2.6s linear;";
+    document.body.appendChild(s); requestAnimationFrame(function(){ s.style.transform="translateY(110vh) rotate("+(Math.random()*360)+"deg)"; s.style.opacity="0"; });
+    setTimeout(function(){ s.remove(); },2700); })(k); } }
+})();
+</script>
+</body>
+</html>
