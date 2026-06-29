@@ -269,6 +269,12 @@ body.hero-active .rail{
 .hero__chip{ font-size:clamp(.74rem,1.4vw,.95rem); font-weight:600; color:var(--pvep-navy); background:rgba(255,255,255,.75); border:1px solid rgba(10,42,74,.12); padding:.45rem 1rem; border-radius:999px; backdrop-filter:blur(6px); }
 .hero__chip b{ color:var(--pvep-blue); }
 
+/* hero background video + mini avatar (ảnh 1) */
+.hero-bg{ position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+.hero-video{ position:absolute; inset:0; width:100%; height:100%; max-height:none; object-fit:cover; }
+.hero-scrim{ position:absolute; inset:0; background:linear-gradient(120deg, rgba(255,255,255,.86) 0%, rgba(255,255,255,.72) 45%, rgba(238,243,248,.70) 75%, rgba(0,131,199,.20) 100%); }
+.hero-mini{ width:clamp(74px,11vw,112px); height:clamp(74px,11vw,112px); max-height:none; border-radius:50%; object-fit:cover; border:3px solid #fff; box-shadow:0 12px 30px rgba(0,131,199,.34); margin:0 auto 1rem; display:block; background:#eef3f8; }
+
 /* ============================================================
    BUTTONS / shared bits
    ============================================================ */
@@ -406,14 +412,11 @@ body.hero-active .rail{
    S9 — Khuôn mặt sưng (star slide)
    ============================================================ */
 .face-wrap{ display:flex; flex-direction:column; align-items:center; gap:1rem; }
-.face{ width:clamp(160px,24vw,230px); aspect-ratio:1; }
-.face .cheek{ transition:transform .6s var(--ac-ease-bounce); transform-origin:center; }
-.face.calm .cheek-l{ transform:scale(.78) translate(4px,2px); }
-.face.calm .cheek-r{ transform:scale(.78) translate(-4px,2px); }
-.face .mouth{ transition:d .5s var(--ac-ease); }
-.face .brow{ transition:transform .5s var(--ac-ease); transform-origin:center; }
-.face.calm .brow-l{ transform:rotate(8deg) translateY(-2px); }
-.face.calm .brow-r{ transform:rotate(-8deg) translateY(-2px); }
+.face{ position:relative; width:clamp(180px,26vw,260px); aspect-ratio:3/4; background:transparent; }
+.face-img{ position:absolute; inset:0; width:100%; height:100%; max-height:none; object-fit:contain; filter:drop-shadow(0 14px 30px rgba(10,42,74,.18)); transition:opacity .55s var(--ac-ease); }
+.face-smile{ opacity:0; }
+.face.calm .face-angry{ opacity:0; }
+.face.calm .face-smile{ opacity:1; }
 .face-out{ font-weight:700; font-size:var(--body-size); color:var(--success); min-height:1.6em; text-align:center; }
 
 /* ============================================================
@@ -605,7 +608,14 @@ body.hero-active .rail{
 
 <!-- ========================= SLIDE 0 — BÌA ========================= -->
 <section class="slide" data-chapter="0" data-hero="1">
+  <div class="hero-bg" aria-hidden="true">
+    <video class="hero-video" autoplay muted loop playsinline poster="assets/offshore-still.jpg">
+      <source src="assets/offshore-motion.mp4" type="video/mp4">
+    </video>
+    <div class="hero-scrim"></div>
+  </div>
   <div class="slide-content"><div class="wrap" style="text-align:center">
+    <img class="hero-mini ac-pop" style="--i:0" src="assets/lan-gian.png" alt="Lan Ngọc">
     <div class="hero__kicker ac-reveal" style="--i:0">Sổ tay nội bộ · Nhóm Công nhân tương lai · Hồ sơ 01/LANNGOC/🤝</div>
     <h1 class="hero__word flash ac-reveal" style="--i:1">NÂNG CẤP<br>LAN NGỌC</h1>
     <div class="hero__sub ac-reveal" style="--i:2">Các điều Lan Ngọc đã bị mắng — &amp; hành trình lên bản 2.0</div>
@@ -630,7 +640,7 @@ body.hero-active .rail{
     </div>
     <div class="panel rule-card ac-reveal ac-reveal--up" style="--i:2">
       <p class="lead">Mọi hành vi <b>sưng mặt, im lặng, tự dỗi</b> sau khi đọc đều bị xếp vào <i>“lỗi cần khắc phục ngay”</i> 😤</p>
-      <p class="lead" style="margin-bottom:1.4rem">Sổ tay lập trên tinh thần <b>mắng vì quý</b> — bạn thân mới nói thẳng thế này. Hệ số quý luôn ≥ hệ số mắng. 🤝</p>
+      <p class="lead" style="margin-bottom:1.4rem">Sổ tay lập trên tinh thần <b>mắng vì quý</b> — quý mới nói thẳng thế này. Hệ số quý luôn ≥ hệ số mắng. 🤝</p>
       <div class="tickline" id="ruleTick" role="checkbox" aria-checked="false" tabindex="0">
         <span class="tickbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span>
         <span>Đã đọc, sẽ không dỗi</span>
@@ -652,7 +662,7 @@ body.hero-active .rail{
       <div class="flip__inner">
         <div class="flip__face flip__front">
           <span class="flip__tag">Chạm để lật</span>
-          <h3>Chọn 1 thứ, làm sâu tới mức không ai thay được — <span class="neo">kể cả tôi.</span></h3>
+          <h3>Chọn 1 thứ, làm sâu tới mức <span class="neo">không ai thay được.</span></h3>
         </div>
         <div class="flip__face flip__back">
           <span class="flip__tag">Mặt sau</span>
@@ -841,17 +851,11 @@ body.hero-active .rail{
       <p class="muted ac-reveal" style="--i:2">Giận thì nói. Đừng bật chế độ “không có gì đâu” rồi để người ta tự đoán 3 ngày. Tôi không phải nhà ngoại cảm.</p>
     </div>
     <div class="face-wrap ac-reveal ac-reveal--up" style="--i:3">
-      <svg class="face" id="face" viewBox="0 0 200 200" aria-label="Khuôn mặt sưng">
-        <circle cx="100" cy="100" r="78" fill="#FFE7B3" stroke="#E9b949" stroke-width="3"/>
-        <ellipse class="cheek cheek-l" cx="60" cy="120" rx="22" ry="20" fill="#FFB4A8" opacity=".75"/>
-        <ellipse class="cheek cheek-r" cx="140" cy="120" rx="22" ry="20" fill="#FFB4A8" opacity=".75"/>
-        <rect class="brow brow-l" x="58" y="74" width="26" height="6" rx="3" fill="#5a4632"/>
-        <rect class="brow brow-r" x="116" y="74" width="26" height="6" rx="3" fill="#5a4632"/>
-        <circle cx="71" cy="96" r="6.5" fill="#3a2e22"/>
-        <circle cx="129" cy="96" r="6.5" fill="#3a2e22"/>
-        <path class="mouth" id="mouth" d="M74 142 Q100 128 126 142" fill="none" stroke="#7a3b2e" stroke-width="6" stroke-linecap="round"/>
-      </svg>
-      <button class="btn" id="cheekBtn">Hạ má xuống ⬇</button>
+      <div class="face" id="face" aria-label="Ảnh tâm trạng">
+        <img class="face-img face-angry" src="assets/lan-gian.png" alt="Đang giận">
+        <img class="face-img face-smile" src="assets/lan-cuoi.png" alt="Đã cười">
+      </div>
+      <button class="btn" id="cheekBtn">Hết giận, cười cái 😊</button>
       <div class="face-out" id="faceOut">Đang giận à? Bấm nút trên, rồi chọn nhanh lý do bên dưới.</div>
       <div class="chips" id="angryChips" style="justify-content:center;max-width:680px">
         <span class="qchip">tôi nói chuyện cộc</span>
@@ -875,7 +879,7 @@ body.hero-active .rail{
     <div class="letgo ac-reveal ac-reveal--up" style="--i:3" id="letgo">
       <div class="lg-item"><span>Chuyện người khác soi áo, soi túi mình</span><button class="lg-x" aria-label="Buông">×</button></div>
       <div class="lg-item"><span>Tin nhắn cũ đọc đi đọc lại</span><button class="lg-x" aria-label="Buông">×</button></div>
-      <div class="lg-item"><span>Lần tôi lỡ miệng làm bạn giận hồi nào đó <i>(cho qua nha 🥺)</i></span><button class="lg-x" aria-label="Buông">×</button></div>
+      <div class="lg-item"><span>Lần tôi lỡ miệng làm bạn giận hồi nào đó</span><button class="lg-x" aria-label="Buông">×</button></div>
       <div class="lg-item"><span>Quá khứ không sửa được nữa</span><button class="lg-x" aria-label="Buông">×</button></div>
       <div class="lg-item"><span>Kỳ vọng người khác phải đoán đúng ý mình</span><button class="lg-x" aria-label="Buông">×</button></div>
     </div>
@@ -974,7 +978,7 @@ body.hero-active .rail{
       <div class="eyebrow ac-reveal" style="--i:1">Kết nạp chính thức</div>
       <div class="rank">CÔNG NHÂN TƯƠNG LAI ƯU TÚ 🏅</div>
       <p class="lead ac-reveal" style="--i:2">Lan Ngọc: <b>đạt</b> — còn vài điều nhỏ để hoàn thiện. Sổ tay này không nhằm thay đổi bạn.</p>
-      <button class="btn ac-reveal" style="--i:3" id="eggBtn">Cho qua mấy lần tôi lỡ mồm nha 🤝</button>
+      <button class="btn ac-reveal" style="--i:3" id="eggBtn">KHÔNG ĐƯỢC GIẬN CÁC BẠN VÔ CỚ 🤝</button>
       <div class="egg-out" id="eggOut">&nbsp;</div>
     </div>
   </div></div>
@@ -1176,14 +1180,13 @@ function boom(opts){ if(typeof confetti!=="function") return; confetti(Object.as
 
 /* S9 — khuôn mặt sưng */
 (function(){
-  var face=document.getElementById("face"), mouth=document.getElementById("mouth"), btn=document.getElementById("cheekBtn"), out=document.getElementById("faceOut"), chips=document.getElementById("angryChips"); if(!face)return;
+  var face=document.getElementById("face"), btn=document.getElementById("cheekBtn"), out=document.getElementById("faceOut"), chips=document.getElementById("angryChips"); if(!face)return;
   var calm=false;
   function setCalm(on){ calm=on; face.classList.toggle("calm",on);
-    mouth.setAttribute("d", on?"M72 138 Q100 162 128 138":"M74 142 Q100 128 126 142");
-    if(on){ btn.textContent="Cười rồi nè 😊"; out.textContent="Thấy chưa — nói ra là nhẹ liền. Giờ chọn lý do để tôi biết đường mà sửa 👇"; }
-    else { btn.textContent="Hạ má xuống ⬇"; }
+    if(on){ btn.textContent="Cười rồi nè 😊"; out.textContent="Thấy chưa — nói ra là nhẹ liền. Giờ chọn lý do để tôi biết đường mà sửa 👇"; boom({particleCount:40,spread:55,scalar:.8}); }
+    else { btn.textContent="Hết giận, cười cái 😊"; out.textContent="Đang giận à? Bấm nút trên, rồi chọn nhanh lý do bên dưới."; }
   }
-  btn.addEventListener("click",function(){ setCalm(!calm); if(!calm===false){} if(face.classList.contains("calm"))boom({particleCount:40,spread:55,scalar:.8}); });
+  btn.addEventListener("click",function(){ setCalm(!calm); });
   chips.addEventListener("click",function(e){ var c=e.target.closest(".qchip"); if(!c)return;
     [].slice.call(chips.children).forEach(function(x){ x.classList.remove("on"); }); c.classList.add("on");
     if(!calm)setCalm(true);
@@ -1247,7 +1250,7 @@ function boom(opts){ if(typeof confetti!=="function") return; confetti(Object.as
 /* S14 — easter egg */
 (function(){
   var btn=document.getElementById("eggBtn"), out=document.getElementById("eggOut"); if(!btn)return;
-  var lines=["Cho qua hết. Quý vẫn nguyên, mắng chỉ là phần thêm.","Bản 2.0 hay bản beta gì tôi cũng chọn làm bạn thân.","Lần sau lỡ mồm nữa thì… vẫn mong bạn nói thẳng, đừng dỗi nha. 🤝"];
+  var lines=["Cho qua hết. Quý vẫn nguyên, mắng chỉ là phần thêm.","Lần sau lỡ mồm nữa thì… vẫn mong bạn nói thẳng, đừng dỗi nha. 🤝"];
   var i=0, done=false;
   btn.addEventListener("click",function(){
     rain(); boom({particleCount:120,spread:100,startVelocity:48,colors:["#0083C7","#00B050","#0A2A4A","#1D4ED8","#FACC15"]});
